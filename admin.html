@@ -209,11 +209,11 @@
       <h2 style="font-size: 1.8rem; margin-bottom: 0.4rem;">Admin Portal</h2>
       <p style="font-size: 0.9rem; margin-bottom: 1.8rem; color: var(--text-muted);">Enter password to manage portfolio details</p>
 
-      <form id="loginForm">
+      <form id="loginForm" onsubmit="handleLoginSubmit(event); return false;">
         <div class="form-group" style="margin-bottom: 1.2rem;">
           <input type="password" id="adminPass" placeholder="Enter Password" required autocomplete="off">
         </div>
-        <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">
+        <button type="button" onclick="handleLoginSubmit(event)" class="btn-primary" style="width: 100%; justify-content: center;">
           <span>Unlock Admin Panel</span>
           <i class="fa-solid fa-lock-open"></i>
         </button>
@@ -996,10 +996,13 @@
     }
 
     // PASSWORD LOGIN CHECK
-    document.getElementById("loginForm").addEventListener("submit", (e) => {
-      e.preventDefault();
+    function handleLoginSubmit(e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
       const passInput = document.getElementById("adminPass");
-      const pass = (passInput.value || "").trim();
+      const pass = passInput ? (passInput.value || "").trim() : "";
       const lowerPass = pass.toLowerCase();
       const storedPass = (getAdminPassword() || "").toLowerCase();
 
@@ -1008,18 +1011,26 @@
         lowerPass === "onkar23@" ||
         lowerPass === "onkar23" ||
         lowerPass === storedPass ||
-        pass === getAdminPassword()
+        pass === getAdminPassword() ||
+        pass === "Onkar23@"
       ) {
         sessionStorage.setItem("admin_logged_in", "true");
         localStorage.setItem("onkar_admin_password", "Onkar23@");
-        passInput.value = "";
+        if (passInput) passInput.value = "";
         showDashboard();
         showToast("Welcome to Admin Dashboard!", "success");
+        return false;
       } else {
-        passInput.value = "";
+        if (passInput) passInput.value = "";
         showToast("Incorrect password! Please try again.", "error");
+        return false;
       }
-    });
+    }
+
+    const loginFormEl = document.getElementById("loginForm");
+    if (loginFormEl) {
+      loginFormEl.addEventListener("submit", handleLoginSubmit);
+    }
 
     if (sessionStorage.getItem("admin_logged_in") === "true") {
       showDashboard();
@@ -1885,6 +1896,7 @@
 
     // Global Window Bindings
     window.switchTab = switchTab;
+    window.handleLoginSubmit = handleLoginSubmit;
     window.handleManualCloudSync = handleManualCloudSync;
     window.saveProfileChanges = saveProfileChanges;
     window.saveResumeTabChanges = saveResumeTabChanges;
