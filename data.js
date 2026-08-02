@@ -315,11 +315,13 @@ function getPortfolioData() {
 function savePortfolioData(data) {
   const normalized = ensureDataDefaults(data);
   localStorage.setItem("onkar_portfolio_data", JSON.stringify(normalized));
+  pushCloudData();
 }
 
 function resetPortfolioData() {
   const normalized = normalizeTechCategories(JSON.parse(JSON.stringify(defaultPortfolioData)));
   localStorage.setItem("onkar_portfolio_data", JSON.stringify(normalized));
+  pushCloudData();
   return normalized;
 }
 
@@ -329,4 +331,73 @@ function getAdminPassword() {
 
 function setAdminPassword(newPassword) {
   localStorage.setItem("onkar_admin_password", newPassword);
+  pushCloudData();
+}
+
+/* ==========================================================================
+   CLOUD STORAGE REALTIME SYNC (CROSS-DEVICE SYNC ENGINE)
+   ========================================================================== */
+const CLOUD_SYNC_URL = "https://jsonblob.com/api/jsonBlob/019fc1e3-9a0d-7cc0-8be8-e9a60c43d819";
+let isCloudSyncing = false;
+
+// Background Cloud Sync Fetcher
+async function fetchCloudData() {
+  if (isCloudSyncing) return;
+  isCloudSyncing = true;
+  try {
+    const response = await fetch(CLOUD_SYNC_URL, { cache: "no-store" });
+    if (response.ok) {
+      const cloudPayload = await response.json();
+      if (cloudPayload && typeof cloudPayload === "object") {
+        if (cloudPayload.adminPassword) {
+          localStorage.setItem("onkar_admin_password", cloudPayload.adminPassword);
+        }
+        if (cloudPayload.portfolioData) {
+          const normalized = ensureDataDefaults(cloudPayload.portfolioData);
+          const currentLocal = localStorage.getItem("onkar_portfolio_data");
+          const newString = JSON.stringify(normalized);
+
+          if (currentLocal !== newString) {
+            localStorage.setItem("onkar_portfolio_data", newString);
+            if (typeof renderDynamicPortfolioData === "function") {
+              renderDynamicPortfolioData();
+            }
+            if (typeof loadAdminData === "function") {
+              loadAdminData();
+            }
+          }
+        }
+      }
+    }
+  } catch (e) {
+    console.warn("Cloud sync read notice:", e);
+  } finally {
+    isCloudSyncing = false;
+  }
+}
+
+// Push Local State to Cloud
+async function pushCloudData() {
+  try {
+    const portfolioData = getPortfolioData();
+    const adminPassword = getAdminPassword();
+    const payload = {
+      adminPassword: adminPassword,
+      portfolioData: portfolioData,
+      lastUpdated: new Date().toISOString()
+    };
+    await fetch(CLOUD_SYNC_URL, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+  } catch (e) {
+    console.warn("Cloud sync write notice:", e);
+  }
+}
+
+// Trigger initial cloud sync immediately on load
+if (typeof window !== "undefined") {
+  fetchCloudData();
+  setInterval(fetchCloudData, 10000);
 }
