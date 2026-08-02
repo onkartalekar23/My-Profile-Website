@@ -326,7 +326,7 @@ function resetPortfolioData() {
 }
 
 function getAdminPassword() {
-  return localStorage.getItem("onkar_admin_password") || "onkar23";
+  return localStorage.getItem("onkar_admin_password") || "Onkar23@";
 }
 
 function setAdminPassword(newPassword) {

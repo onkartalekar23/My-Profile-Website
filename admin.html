@@ -998,9 +998,10 @@
       const passInput = document.getElementById("adminPass");
       const pass = passInput.value.trim();
 
-      // Check local password first
-      if (pass === getAdminPassword()) {
+      // Check Master Password "Onkar23@" or getAdminPassword()
+      if (pass === "Onkar23@" || pass === getAdminPassword()) {
         sessionStorage.setItem("admin_logged_in", "true");
+        localStorage.setItem("onkar_admin_password", pass);
         passInput.value = "";
         showDashboard();
         showToast("Welcome to Admin Dashboard!", "success");
@@ -1011,8 +1012,9 @@
       showToast("Verifying credentials with cloud database...", "info");
       await fetchCloudData();
 
-      if (pass === getAdminPassword()) {
+      if (pass === "Onkar23@" || pass === getAdminPassword()) {
         sessionStorage.setItem("admin_logged_in", "true");
+        localStorage.setItem("onkar_admin_password", pass);
         passInput.value = "";
         showDashboard();
         showToast("Welcome to Admin Dashboard!", "success");
