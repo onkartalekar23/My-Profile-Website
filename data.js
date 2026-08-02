@@ -315,7 +315,7 @@ function getPortfolioData() {
 function savePortfolioData(data) {
   const normalized = ensureDataDefaults(data);
   localStorage.setItem("onkar_portfolio_data", JSON.stringify(normalized));
-  pushCloudData();
+  return pushCloudData();
 }
 
 function resetPortfolioData() {
@@ -331,7 +331,7 @@ function getAdminPassword() {
 
 function setAdminPassword(newPassword) {
   localStorage.setItem("onkar_admin_password", newPassword);
-  pushCloudData();
+  return pushCloudData();
 }
 
 /* ==========================================================================

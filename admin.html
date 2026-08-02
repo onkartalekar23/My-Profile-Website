@@ -993,15 +993,31 @@
     }
 
     // PASSWORD LOGIN CHECK
-    document.getElementById("loginForm").addEventListener("submit", (e) => {
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const pass = document.getElementById("adminPass").value.trim();
+      const passInput = document.getElementById("adminPass");
+      const pass = passInput.value.trim();
+
+      // Check local password first
+      if (pass === getAdminPassword()) {
+        sessionStorage.setItem("admin_logged_in", "true");
+        passInput.value = "";
+        showDashboard();
+        showToast("Welcome to Admin Dashboard!", "success");
+        return;
+      }
+
+      // If local check failed, check realtime cloud database for cross-device password updates
+      showToast("Verifying credentials with cloud database...", "info");
+      await fetchCloudData();
 
       if (pass === getAdminPassword()) {
         sessionStorage.setItem("admin_logged_in", "true");
+        passInput.value = "";
         showDashboard();
         showToast("Welcome to Admin Dashboard!", "success");
       } else {
+        passInput.value = "";
         showToast("Incorrect password! Please try again.", "error");
       }
     });
@@ -1048,9 +1064,15 @@
       if (modal) {
         modal.style.display = "none";
       }
+      const c = document.getElementById("dashCurrPass");
+      const n = document.getElementById("dashNewPass");
+      const conf = document.getElementById("dashConfPass");
+      if (c) c.value = "";
+      if (n) n.value = "";
+      if (conf) conf.value = "";
     }
 
-    function handleDashboardPasswordChange(e) {
+    async function handleDashboardPasswordChange(e) {
       e.preventDefault();
       const currP = document.getElementById("dashCurrPass").value.trim();
       const newP = document.getElementById("dashNewPass").value.trim();
@@ -1071,9 +1093,10 @@
         return;
       }
 
-      setAdminPassword(newP);
+      showToast("Syncing new password to cloud database...", "info");
+      await setAdminPassword(newP);
       closeChangePasswordModal();
-      showToast("Password updated successfully!", "success");
+      showToast("Password updated across all devices successfully!", "success");
     }
 
     function switchTab(tabId) {
