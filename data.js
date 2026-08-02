@@ -345,7 +345,8 @@ async function fetchCloudData() {
   if (isCloudSyncing) return;
   isCloudSyncing = true;
   try {
-    const response = await fetch(CLOUD_SYNC_URL, { cache: "no-store" });
+    const cacheBusterUrl = CLOUD_SYNC_URL + "?t=" + Date.now();
+    const response = await fetch(cacheBusterUrl, { cache: "no-store" });
     if (response.ok) {
       const cloudPayload = await response.json();
       if (cloudPayload && typeof cloudPayload === "object") {
@@ -386,18 +387,27 @@ async function pushCloudData() {
       portfolioData: portfolioData,
       lastUpdated: new Date().toISOString()
     };
-    await fetch(CLOUD_SYNC_URL, {
+    const res = await fetch(CLOUD_SYNC_URL, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
+    return res.ok;
   } catch (e) {
     console.warn("Cloud sync write notice:", e);
+    return false;
   }
 }
 
-// Trigger initial cloud sync immediately on load
+// Trigger initial cloud sync immediately on load & add tab focus listeners
 if (typeof window !== "undefined") {
   fetchCloudData();
-  setInterval(fetchCloudData, 10000);
+  setInterval(fetchCloudData, 4000);
+
+  window.addEventListener("focus", fetchCloudData);
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      fetchCloudData();
+    }
+  });
 }

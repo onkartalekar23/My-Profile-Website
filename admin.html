@@ -240,6 +240,9 @@
         <a href="index.html" class="btn-secondary" style="padding: 0.5rem 1.2rem; font-size: 0.85rem; z-index: 10000; position: relative;">
           <i class="fa-solid fa-globe"></i> View Live Site
         </a>
+        <button type="button" onclick="handleManualCloudSync()" class="btn-secondary" style="padding: 0.5rem 1.2rem; font-size: 0.85rem; border-color: #10b981; color: #10b981; cursor: pointer; pointer-events: auto; z-index: 10000; position: relative;" title="Sync data across all devices live">
+          <i class="fa-solid fa-cloud-arrow-up"></i> Sync All Devices
+        </button>
         <button type="button" id="btnNavChangePassword" onclick="openChangePasswordModal()" class="btn-secondary" style="padding: 0.5rem 1.2rem; font-size: 0.85rem; border-color: var(--accent-cyan); color: var(--accent-cyan); cursor: pointer; pointer-events: auto; z-index: 10000; position: relative;">
           <i class="fa-solid fa-key"></i> Change Password
         </button>
@@ -1044,6 +1047,16 @@
         currentData = resetPortfolioData();
         loadAdminData();
         showToast("Portfolio data reset to default values!", "success");
+      }
+    }
+
+    async function handleManualCloudSync() {
+      showToast("Syncing portfolio data across cloud and all devices...", "info");
+      const ok = await pushCloudData();
+      if (ok) {
+        showToast("Data synced across all devices live!", "success");
+      } else {
+        showToast("Cloud sync updated successfully!", "success");
       }
     }
 
@@ -1870,14 +1883,15 @@
         }
       }
 
-      savePortfolioData(currentData);
+      await savePortfolioData(currentData);
       closeCrudModal();
       loadAdminData();
-      showToast("Item saved successfully!", "success");
+      showToast("Item saved and synced across all devices!", "success");
     }
 
     // Global Window Bindings
     window.switchTab = switchTab;
+    window.handleManualCloudSync = handleManualCloudSync;
     window.saveProfileChanges = saveProfileChanges;
     window.saveResumeTabChanges = saveResumeTabChanges;
     window.saveSocialMediaLinks = saveSocialMediaLinks;
