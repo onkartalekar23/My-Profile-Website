@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About | Onkar Talekar</title>
+
+  <!-- Google Fonts & Font Awesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- Particle Background Canvas -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- Navigation Bar -->
+  <nav>
+    <div style="display: flex; align-items: center; gap: 0.5rem;">
+      <a href="index.html#home" class="logo-box">
+        <div class="nav-logo">
+          <img src="onkar.png" alt="Onkar Talekar Logo">
+        </div>
+        <span class="logo-text">Onkar Talekar</span>
+      </a>
+      <a href="admin.html" class="admin-nav-badge" title="Admin Portal">
+        <i class="fa-solid fa-lock"></i>
+      </a>
+    </div>
+
+    <ul class="nav-links">
+      <li><a href="home.html">Home</a></li>
+      <li><a href="about.html" class="active">About</a></li>
+      <li><a href="suu.html">Skills</a></li>
+      <li><a href="techstack.html">Tech Stack</a></li>
+      <li><a href="project.html">Projects</a></li>
+      <li><a href="Certifications.html">Certifications</a></li>
+      <li><a href="resume.html">Resume</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+
+    <button class="mobile-toggle" aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <!-- About Section -->
+  <section id="about" style="padding-top: 8rem;">
+    <h2 class="section-title">About Me</h2>
+    <p class="section-subtitle" id="dynAboutSubtitle">Bridging Artificial Intelligence, Data Analytics, and Web Development</p>
+
+    <div class="about-container">
+      <div class="about-photo">
+        <div class="photo-ring"></div>
+        <img src="onkar.png" alt="Onkar Talekar Photo" id="dynAboutPhoto">
+      </div>
+
+      <div class="about-content">
+        <h2 id="dynAboutHeadline">Passionate Technologist & AI Enthusiast</h2>
+        <p id="dynAboutBio1">
+          Hi, I’m <strong>Onkar Talekar</strong> — a Computer Engineering diploma graduate currently pursuing a degree
+          in <strong>Artificial Intelligence & Data Science (AIDS)</strong>. I have a strong passion for building clean,
+          modern, and responsive web applications while exploring the practical applications of AI and data-driven
+          technologies.
+        </p>
+
+        <p id="dynAboutBio2">
+          During my diploma, I developed a solid foundation in core programming, web design, and algorithmic
+          problem-solving. Currently through my AIDS degree and hands-on industrial internships, I am gaining experience with
+          <span>Python, data preprocessing, NumPy, Pandas, machine learning concepts, and full-stack web technologies
+            like HTML, CSS, JavaScript, and Django.</span>
+        </p>
+
+        <p id="dynAboutBio3">
+          I enjoy turning ideas into real-world digital solutions and focus on user-friendly design, performance, and
+          mobile responsiveness. My goal is to grow as a skilled developer, contribute to impactful projects, and build intelligent solutions
+          that solve real problems.
+        </p>
+
+        <div class="about-tags" id="dynAboutTags">
+          <span>Python Developer</span>
+          <span>AI & Data Science Student</span>
+          <span>Frontend Specialist</span>
+          <span>Data Analytics</span>
+          <span>Creative Problem Solver</span>
+        </div>
+
+        <div class="edu-cards" id="dynAboutEduCards">
+          <div class="edu-card">
+            <h4>B.E. in AI & Data Science</h4>
+            <p>2025 – 2028 | Machine Learning, Deep Learning & Big Data</p>
+          </div>
+          <div class="edu-card">
+            <h4>Diploma in Computer Eng.</h4>
+            <p>2022 – 2025 | Programming Languages & Web Architecture</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Centered Social Connect Bar -->
+  <!-- Footer -->
+  <footer>
+    <p>© 2026 Onkar Talekar. All rights reserved. | Built with Passion & AI Engineering</p>
+  </footer>
+
+  <!-- JS -->
+  <script src="data.js"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>

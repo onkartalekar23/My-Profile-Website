@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resume | Onkar Talekar</title>
+
+  <!-- Google Fonts & Font Awesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- Background Particle Canvas -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- Navigation Bar -->
+  <nav>
+    <div style="display: flex; align-items: center; gap: 0.5rem;">
+      <a href="index.html#home" class="logo-box">
+        <div class="nav-logo">
+          <img src="onkar.png" alt="Onkar Talekar Logo">
+        </div>
+        <span class="logo-text">Onkar Talekar</span>
+      </a>
+      <a href="admin.html" class="admin-nav-badge" title="Admin Portal">
+        <i class="fa-solid fa-lock"></i>
+      </a>
+    </div>
+
+    <ul class="nav-links">
+      <li><a href="home.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="suu.html">Skills</a></li>
+      <li><a href="techstack.html">Tech Stack</a></li>
+      <li><a href="project.html">Projects</a></li>
+      <li><a href="Certifications.html">Certifications</a></li>
+      <li><a href="resume.html" class="active">Resume</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+
+    <button class="mobile-toggle" aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <!-- Resume Section -->
+  <section id="resume" style="padding-top: 8rem;">
+    <h2 class="section-title">Resume & Experience</h2>
+    <p class="section-subtitle">A detailed overview of my career journey, education, and technical experience</p>
+
+    <div class="resume-container">
+      <div class="resume-card">
+        <h3><i class="fa-solid fa-user-tie"></i> Professional Summary</h3>
+        <p id="dynProfSummary">
+          AI & Data Science undergraduate with a Diploma in Computer Engineering and hands-on industrial experience in
+          C, C++, Java, Python, and Full-Stack Web Development. Focused on engineering data-driven and web-based
+          intelligent software solutions.
+        </p>
+      </div>
+
+      <div class="resume-card">
+        <h3><i class="fa-solid fa-graduation-cap"></i> Education Timeline</h3>
+        <ul id="dynEducationList">
+          <li><strong>B.E. in Artificial Intelligence and Data Science</strong> — 2025–2028</li>
+          <li><strong>Diploma in Computer Engineering</strong> — 2022–2025</li>
+          <li><strong>Secondary School Certificate (SSC)</strong> — 2021–2022</li>
+        </ul>
+      </div>
+
+      <div class="resume-card">
+        <h3><i class="fa-solid fa-briefcase"></i> Internships & Experience</h3>
+        <div id="dynInternshipList">
+          <div style="margin-bottom: 1.5rem;">
+            <h4 style="color: var(--accent-cyan); font-size: 1.1rem; margin-bottom: 0.2rem;">Data Analytics Intern</h4>
+            <p style="color: var(--text-main); font-weight: 600;">TechnoHacks Solutions Pvt. Ltd., Nashik | Jan 2026 –
+              Feb 2026</p>
+            <ul>
+              <li>Performed data cleaning and statistical analysis using Excel, Python, and Power BI.</li>
+              <li>Built interactive analytics dashboards and calculated KPIs using DAX queries.</li>
+              <li>Analyzed Retail, HR, Academic, and COVID-19 datasets to generate business insights.</li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 style="color: var(--accent-cyan); font-size: 1.1rem; margin-bottom: 0.2rem;">Full Stack Python
+              Development Intern</h4>
+            <p style="color: var(--text-main); font-weight: 600;">Sumago Infotech Pvt. Ltd., Nashik | June 2024 – July
+              2024</p>
+            <ul>
+              <li>Developed full-stack web application modules using Python, Django, and modern web stack.</li>
+              <li>Built backend business logic, database models, and API integrations.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="resume-card">
+        <h3><i class="fa-solid fa-folder-open"></i> Key Projects Showcase</h3>
+        <ul id="dynKeyProjectsList">
+          <li>Drug Recommendation System & Government Scheme Assistant</li>
+          <li>Interactive Personal AI Portfolio Website</li>
+          <li>Online Resume Creator Generator</li>
+          <li>Tours & Travels Booking Platform</li>
+          <li>CS Cake Shop E-commerce Interface</li>
+        </ul>
+      </div>
+
+      <div class="resume-card">
+        <h3><i class="fa-solid fa-code"></i> Core Skills & Proficiencies</h3>
+        <div id="dynSkillsPillList" style="display: flex; flex-wrap: wrap; gap: 0.6rem;">
+          <span class="skill-pill">Python</span>
+          <span class="skill-pill">C & C++</span>
+          <span class="skill-pill">Django Framework</span>
+          <span class="skill-pill">JavaScript</span>
+          <span class="skill-pill">SQL & Databases</span>
+          <span class="skill-pill">Data Analytics</span>
+          <span class="skill-pill">Problem Solving</span>
+        </div>
+      </div>
+
+      <!-- PDF Preview -->
+      <div class="resume-preview-frame">
+        <iframe src="Onkar Resume Latest (1)_compressed.pdf" title="Onkar Talekar Resume PDF"></iframe>
+      </div>
+
+      <div class="resume-action-btns">
+        <a href="Onkar Resume Latest (1)_compressed.pdf" download="Onkar_Talekar_Resume.pdf" class="btn-primary">
+          <span>Download Resume PDF</span>
+          <i class="fa-solid fa-file-arrow-down"></i>
+        </a>
+        <a href="https://onkartalekar23.github.io/my-resume/" target="_blank" class="btn-secondary">
+          <span>See Resume on Live Website</span>
+          <i class="fa-solid fa-globe"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2026 Onkar Talekar. All rights reserved. | Built with Passion & AI Engineering</p>
+  </footer>
+
+  <!-- JS -->
+  <script src="data.js"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>

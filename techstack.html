@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tech Stack | Onkar Talekar</title>
+
+  <!-- Google Fonts & Font Awesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Background Particle Canvas -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- Navigation Bar -->
+  <nav>
+    <div style="display: flex; align-items: center; gap: 0.5rem;">
+      <a href="index.html#home" class="logo-box">
+        <div class="nav-logo">
+          <img src="onkar.png" alt="Onkar Talekar Logo">
+        </div>
+        <span class="logo-text">Onkar Talekar</span>
+      </a>
+      <a href="admin.html" class="admin-nav-badge" title="Admin Portal">
+        <i class="fa-solid fa-lock"></i>
+      </a>
+    </div>
+
+    <ul class="nav-links">
+      <li><a href="home.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="suu.html">Skills</a></li>
+      <li><a href="techstack.html" class="active">Tech Stack</a></li>
+      <li><a href="project.html">Projects</a></li>
+      <li><a href="Certifications.html">Certifications</a></li>
+      <li><a href="resume.html">Resume</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+
+    <button class="mobile-toggle" aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <!-- Tech Stack Section -->
+  <section id="techstack" style="padding-top: 8rem;">
+    <h2 class="section-title">Tech Stack Proficiency</h2>
+    <p class="section-subtitle">Technologies, frameworks, and tools I use to build intelligent software systems</p>
+
+    <div class="tech-grid" id="dynTechGrid">
+      <div class="tech-card">
+        <h3><i class="fa-solid fa-code"></i> Programming Languages</h3>
+        <div class="skill-bar-item">
+          <div class="skill-info"><span>Python</span><span>75%</span></div>
+          <div class="bar"><div style="width:75%"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-info"><span>C</span><span>85%</span></div>
+          <div class="bar"><div style="width:85%"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-info"><span>C++</span><span>80%</span></div>
+          <div class="bar"><div style="width:80%"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-info"><span>JavaScript</span><span>65%</span></div>
+          <div class="bar"><div style="width:65%"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-info"><span>SQL</span><span>40%</span></div>
+          <div class="bar"><div style="width:40%"></div></div>
+        </div>
+      </div>
+
+      <div class="tech-card">
+        <h3><i class="fa-solid fa-chart-pie"></i> Data & Visualization</h3>
+        <div class="skill-bar-item">
+          <div class="skill-info"><span>NumPy</span><span>75%</span></div>
+          <div class="bar"><div style="width:75%"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-info"><span>Pandas</span><span>65%</span></div>
+          <div class="bar"><div style="width:65%"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-info"><span>Power BI</span><span>40%</span></div>
+          <div class="bar"><div style="width:40%"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-info"><span>Matplotlib</span><span>45%</span></div>
+          <div class="bar"><div style="width:45%"></div></div>
+        </div>
+      </div>
+
+      <div class="tech-card">
+        <h3><i class="fa-solid fa-screwdriver-wrench"></i> Tools & Ecosystem</h3>
+        <div class="skill-bar-item">
+          <div class="skill-info"><span>VS Code</span><span>90%</span></div>
+          <div class="bar"><div style="width:90%"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-info"><span>GitHub & Git</span><span>70%</span></div>
+          <div class="bar"><div style="width:70%"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-info"><span>Linux</span><span>60%</span></div>
+          <div class="bar"><div style="width:60%"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-info"><span>Anaconda</span><span>60%</span></div>
+          <div class="bar"><div style="width:60%"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2026 Onkar Talekar. All rights reserved. | Built with Passion & AI Engineering</p>
+  </footer>
+
+  <!-- JS -->
+  <script src="data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

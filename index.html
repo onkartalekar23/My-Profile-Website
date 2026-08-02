@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Onkar Talekar | AI & Full-Stack Portfolio</title>
+
+  <!-- Google Fonts & Font Awesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Background Particle Canvas -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- Navigation Bar -->
+  <nav>
+    <div style="display: flex; align-items: center; gap: 0.5rem;">
+      <a href="#home" class="logo-box">
+        <div class="nav-logo">
+          <img src="onkar.png" alt="Onkar Talekar Logo">
+        </div>
+        <span class="logo-text">Onkar Talekar</span>
+      </a>
+      <a href="admin.html" class="admin-nav-badge" title="Admin Portal">
+        <i class="fa-solid fa-lock"></i>
+      </a>
+    </div>
+
+    <ul class="nav-links">
+      <li><a href="#home" class="active">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#techstack">Tech Stack</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#certifications">Certifications</a></li>
+      <li><a href="#resume">Resume</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+
+    <button class="mobile-toggle" aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero" id="home">
+    <div class="hero-container">
+      <div class="profile-image-wrapper">
+        <div class="rotating-circle"></div>
+        <img src="onkar.png" alt="Onkar Talekar Profile" class="profile-img">
+      </div>
+
+      <div class="hero-text">
+        <h1>Hi, I'm <span class="name-highlight">Onkar Talekar</span></h1>
+        <p class="tagline">Artificial Intelligence & Data Science Student</p>
+
+        <div class="skills-badges">
+          <span>AI / ML Engineer</span>
+          <span>Python Developer</span>
+          <span>Full-Stack Innovator</span>
+          <span>Problem Solver</span>
+        </div>
+
+        <div class="info-boxes">
+          <div class="info-box">
+            <p>📍 Location</p>
+            <span>Nashik, Maharashtra</span>
+          </div>
+          <div class="info-box">
+            <p>💼 Expertise</p>
+            <span>AI/ML & Web Systems</span>
+          </div>
+          <div class="info-box">
+            <p>✉ Contact</p>
+            <a href="mailto:onkartalekar23@gmail.com" onclick="window.open('https://mail.google.com/mail/?view=cm&fs=1&to=onkartalekar23@gmail.com'); return false;">onkartalekar23@gmail.com</a>
+          </div>
+        </div>
+
+        <div class="hero-actions">
+          <a href="#projects" class="btn-primary">
+            <span>Explore Projects</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
+          <a href="Onkar Resume Latest (1)_compressed.pdf" download="Onkar_Talekar_Resume.pdf" class="btn-secondary">
+            <span>Download CV</span>
+            <i class="fa-solid fa-download"></i>
+          </a>
+        </div>
+
+        <div class="hero-social-links">
+          <a href="https://github.com/onkartalekar23" target="_blank" class="platform-icon-btn github" title="GitHub"><i class="fa-brands fa-github"></i></a>
+          <a href="https://www.linkedin.com/in/onkar-talekar-497958360" target="_blank" class="platform-icon-btn linkedin" title="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+          <a href="mailto:onkartalekar23@gmail.com" onclick="window.open('https://mail.google.com/mail/?view=cm&fs=1&to=onkartalekar23@gmail.com'); return false;" class="platform-icon-btn email" title="Email"><i class="fa-solid fa-envelope"></i></a>
+          <a href="https://wa.me/qr/753CYNANVRCJO1" target="_blank" class="platform-icon-btn whatsapp" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+          <a href="https://www.instagram.com/_onkar_talekar_" target="_blank" class="platform-icon-btn instagram" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about">
+    <h2 class="section-title">About Me</h2>
+    <p class="section-subtitle">Bridging Artificial Intelligence, Data Analytics, and Web Development</p>
+
+    <div class="about-container">
+      <div class="about-photo">
+        <div class="photo-ring"></div>
+        <img src="onkar.png" alt="Onkar Talekar Photo">
+      </div>
+
+      <div class="about-content">
+        <h2>Passionate Technologist & AI Enthusiast</h2>
+        <p>
+          I am <strong>Onkar Talekar</strong> — a Computer Engineering diploma graduate currently pursuing a degree in 
+          <strong>Artificial Intelligence & Data Science (AIDS)</strong>. I specialize in building intelligent, clean, and responsive web 
+          applications while engineering data-driven solutions using machine learning and modern software practices.
+        </p>
+        <p>
+          Throughout my academic journey and industrial internships, I have cultivated strong expertise in 
+          <strong>Python, Django, C/C++, Java, SQL, NumPy, Pandas</strong>, and frontend technologies like 
+          <strong>HTML, CSS, and JavaScript</strong>.
+        </p>
+
+        <div class="about-tags">
+          <span>Python Developer</span>
+          <span>AI/ML Practitioner</span>
+          <span>Frontend Developer</span>
+          <span>Data Analytics</span>
+          <span>Creative Thinker</span>
+        </div>
+
+        <div class="edu-cards">
+          <div class="edu-card">
+            <h4>B.E. in AI & Data Science</h4>
+            <p>2022 – 2025 | Advanced ML, Deep Learning & Analytics</p>
+          </div>
+          <div class="edu-card">
+            <h4>Diploma in Computer Eng.</h4>
+            <p>2022 – 2025 | Core Programming & Web Architecture</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills Section -->
+  <section id="skills">
+    <h2 class="section-title">My Skills</h2>
+    <p class="section-subtitle">Technical competencies, frameworks, and core domain knowledge</p>
+
+    <div class="skills-grid">
+      <div class="skill-card"><img src="html.png" alt="HTML"><span>HTML5</span></div>
+      <div class="skill-card"><img src="css.png" alt="CSS"><span>CSS3</span></div>
+      <div class="skill-card"><img src="js.png" alt="JavaScript"><span>JavaScript</span></div>
+      <div class="skill-card"><img src="react.png" alt="React"><span>React</span></div>
+      <div class="skill-card"><img src="python.png" alt="Python"><span>Python</span></div>
+      <div class="skill-card"><img src="java.png" alt="Java"><span>Java</span></div>
+      <div class="skill-card"><img src="c.png" alt="C"><span>C</span></div>
+      <div class="skill-card"><img src="c++.png" alt="C++"><span>C++</span></div>
+      <div class="skill-card"><img src="pytorch.png" alt="PyTorch"><span>PyTorch</span></div>
+      <div class="skill-card"><img src="Django.png" alt="Django"><span>Django</span></div>
+      <div class="skill-card"><img src="mysql.png" alt="MySQL"><span>MySQL</span></div>
+      <div class="skill-card"><img src="vb.png" alt="VB.Net"><span>VB.Net</span></div>
+    </div>
+
+    <div class="ski-container">
+      <div class="ski-card">
+        <h3><i class="fa-solid fa-code"></i> Programming</h3>
+        <ul>
+          <li>Python</li>
+          <li>C & C++</li>
+          <li>Java</li>
+          <li>JavaScript</li>
+        </ul>
+      </div>
+
+      <div class="ski-card">
+        <h3><i class="fa-solid fa-laptop-code"></i> Web Development</h3>
+        <ul>
+          <li>HTML5 & CSS3</li>
+          <li>JavaScript & React</li>
+          <li>Django & Full-Stack</li>
+          <li>Responsive UI/UX</li>
+        </ul>
+      </div>
+
+      <div class="ski-card">
+        <h3><i class="fa-solid fa-brain"></i> Core Concepts</h3>
+        <ul>
+          <li>Data Structures & Algorithms</li>
+          <li>Database Management (SQL)</li>
+          <li>Data Analytics & Visualization</li>
+          <li>Software Engineering</li>
+        </ul>
+      </div>
+
+      <div class="ski-card">
+        <h3><i class="fa-solid fa-users"></i> Soft Skills</h3>
+        <ul>
+          <li>Problem Solving</li>
+          <li>Team Leadership</li>
+          <li>Analytical Thinking</li>
+          <li>Adaptability & Communication</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tech Stack Section -->
+  <section id="techstack">
+    <h2 class="section-title">Tech Stack Proficiency</h2>
+    <p class="section-subtitle">Hands-on experience and proficiency breakdown across domains</p>
+
+    <div class="tech-grid">
+      <div class="tech-card">
+        <h3>Programming Languages</h3>
+        <div class="skill-bar-item">
+          <div class="skill-info"><span>Python</span><span>75%</span></div>
+          <div class="bar"><div style="width:75%"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-info"><span>C</span><span>85%</span></div>
+          <div class="bar"><div style="width:85%"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-info"><span>C++</span><span>80%</span></div>
+          <div class="bar"><div style="width:80%"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-info"><span>JavaScript</span><span>65%</span></div>
+          <div class="bar"><div style="width:65%"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-info"><span>SQL</span><span>40%</span></div>
+          <div class="bar"><div style="width:40%"></div></div>
+        </div>
+      </div>
+
+      <div class="tech-card">
+        <h3>Data & Visualization</h3>
+        <div class="skill-bar-item">
+          <div class="skill-info"><span>NumPy</span><span>75%</span></div>
+          <div class="bar"><div style="width:75%"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-info"><span>Pandas</span><span>65%</span></div>
+          <div class="bar"><div style="width:65%"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-info"><span>Power BI</span><span>40%</span></div>
+          <div class="bar"><div style="width:40%"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-info"><span>Matplotlib</span><span>45%</span></div>
+          <div class="bar"><div style="width:45%"></div></div>
+        </div>
+      </div>
+
+      <div class="tech-card">
+        <h3>Tools & Ecosystem</h3>
+        <div class="skill-bar-item">
+          <div class="skill-info"><span>VS Code</span><span>90%</span></div>
+          <div class="bar"><div style="width:90%"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-info"><span>GitHub & Git</span><span>70%</span></div>
+          <div class="bar"><div style="width:70%"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-info"><span>Linux</span><span>60%</span></div>
+          <div class="bar"><div style="width:60%"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-info"><span>Anaconda</span><span>60%</span></div>
+          <div class="bar"><div style="width:60%"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects Section -->
+  <section id="projects">
+    <h2 class="section-title">Featured Projects</h2>
+    <p class="section-subtitle">Real-world AI systems, healthcare solutions, and dynamic web applications</p>
+
+    <div class="projects-grid">
+      <div class="project-card-luxury">
+        <div class="project-img-wrapper" onclick="openImage(this)">
+          <img src="medicare.png" alt="Drug Recommendation System">
+        </div>
+        <div class="project-details">
+          <h3>Drug Recommendation & Govt Assistant</h3>
+          <p>Machine Learning powered health platform predicting diseases, recommending medications, and suggesting relevant government healthcare schemes.</p>
+          <div class="project-tags">
+            <span>Python</span>
+            <span>Machine Learning</span>
+            <span>Web App</span>
+          </div>
+          <a href="https://onkartalekar23.github.io/Mediconnect/" target="_blank" class="project-link-btn">
+            View Live Demo <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="project-card-luxury">
+        <div class="project-img-wrapper" onclick="openImage(this)">
+          <img src="webprofile.png" alt="Portfolio Website">
+        </div>
+        <div class="project-details">
+          <h3>Interactive AI Portfolio Website</h3>
+          <p>A luxury responsive portfolio built with modern dark glassmorphism, dynamic animations, interactive studio, and lightbox previews.</p>
+          <div class="project-tags">
+            <span>HTML5</span>
+            <span>CSS Glassmorphism</span>
+            <span>JavaScript</span>
+          </div>
+          <a href="https://onkartalekar0.github.io/Profile-Website/" target="_blank" class="project-link-btn">
+            View Live Demo <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="project-card-luxury">
+        <div class="project-img-wrapper" onclick="openImage(this)">
+          <img src="resumeweb.png" alt="Resume Creator Website">
+        </div>
+        <div class="project-details">
+          <h3>Resume Creator Web App</h3>
+          <p>An online resume generator enabling users to construct, format, and download professional resumes effortlessly.</p>
+          <div class="project-tags">
+            <span>JavaScript</span>
+            <span>HTML/CSS</span>
+            <span>Generator</span>
+          </div>
+          <a href="https://onkartalekar23.github.io/Resume-Creater-Website/" target="_blank" class="project-link-btn">
+            View Live Demo <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Project Gallery -->
+    <h3 style="text-align: center; font-size: 1.8rem; margin-bottom: 1.5rem; color: var(--accent-cyan);">Project Snapshot Gallery</h3>
+    <div class="gallery">
+      <div class="gallery-item" onclick="openImage(this)">
+        <img src="cake.jpeg" alt="Cake Shop Project">
+        <div class="gallery-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
+      </div>
+      <div class="gallery-item" onclick="openImage(this)">
+        <img src="gov.png" alt="Gov Schemes Project">
+        <div class="gallery-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
+      </div>
+      <div class="gallery-item" onclick="openImage(this)">
+        <img src="flower.jpeg" alt="Tours & Travels Project">
+        <div class="gallery-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
+      </div>
+      <div class="gallery-item" onclick="openImage(this)">
+        <img src="drug.png" alt="Drug Analytics UI">
+        <div class="gallery-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Certifications Section -->
+  <section id="certifications">
+    <h2 class="section-title">Certifications</h2>
+    <p class="section-subtitle">Verified industrial trainings and computer certifications (Click to View Certificate)</p>
+
+    <div class="cert-grid">
+      <div class="cert-card" onclick="openImage(this)">
+        <div class="cert-img-container"><img src="onkarsqlda.jpg" alt="SQL For Data Analytics"></div>
+        <h3>SQL For Data Analytics – Simplilearn</h3>
+        <p>Real-world data analysis, complex aggregations, joins, and database analytics workflows.</p>
+      </div>
+
+      <div class="cert-card" onclick="openImage(this)">
+        <div class="cert-img-container"><img src="onkarsqlds.jpg" alt="SQL for Data Science"></div>
+        <h3>SQL for Data Science – Simplilearn</h3>
+        <p>Advanced SQL techniques, subqueries, window functions, and analytics query optimization.</p>
+      </div>
+
+      <div class="cert-card" onclick="openImage(this)">
+        <div class="cert-img-container"><img src="onkargai.jpg" alt="Generative AI Fundamentals"></div>
+        <h3>Generative AI Fundamentals – Simplilearn</h3>
+        <p>Foundations of GenAI, prompt engineering techniques, and AI integration in software.</p>
+      </div>
+
+      <div class="cert-card" onclick="openImage(this)">
+        <div class="cert-img-container"><img src="onkarpyb.jpg" alt="Python for Beginners"></div>
+        <h3>Python for Beginners – Simplilearn</h3>
+        <p>Core Python programming, control structures, data structures, and automation scripting.</p>
+      </div>
+
+      <div class="cert-card" onclick="openImage(this)">
+        <div class="cert-img-container"><img src="onkarclud.jpg" alt="Innovating with Google Cloud AI"></div>
+        <h3>Google Cloud AI Innovation – Simplilearn</h3>
+        <p>Introduction to Google Cloud AI services, cloud machine learning models, and deployment.</p>
+      </div>
+
+      <div class="cert-card" onclick="openImage(this)">
+        <div class="cert-img-container"><img src="onkardiploma.jpg" alt="KLiC Diploma"></div>
+        <h3>KLiC Diploma (C, C++ & Java)</h3>
+        <p>Awarded diploma after completing comprehensive courses in C, C++, and Java programming.</p>
+      </div>
+
+      <div class="cert-card" onclick="openImage(this)">
+        <div class="cert-img-container"><img src="onkarc.jpg" alt="KLiC C Programming"></div>
+        <h3>KLiC C Programming Certificate</h3>
+        <p>In-depth C fundamentals, memory management, pointers, and algorithm problem-solving.</p>
+      </div>
+
+      <div class="cert-card" onclick="openImage(this)">
+        <div class="cert-img-container"><img src="onkarc++.jpg" alt="KLiC C++ Programming"></div>
+        <h3>KLiC C++ Programming (91%)</h3>
+        <p>Object-Oriented Programming, classes, inheritance, polymorphism, and mini-projects.</p>
+      </div>
+
+      <div class="cert-card" onclick="openImage(this)">
+        <div class="cert-img-container"><img src="onkarjava.jpg" alt="KLiC Java Programming"></div>
+        <h3>KLiC Java Programming Certificate</h3>
+        <p>Core Java, OOP design, exception handling, and application development workflows.</p>
+      </div>
+
+      <div class="cert-card" onclick="openImage(this)">
+        <div class="cert-img-container"><img src="onkartranning.jpg" alt="Full Stack Development"></div>
+        <h3>Full Stack Python & Django Training</h3>
+        <p>6-week industrial training in Python backend, Django framework, and web application logic.</p>
+      </div>
+
+      <div class="cert-card" onclick="openImage(this)">
+        <div class="cert-img-container"><img src="Onkarjs.jpg" alt="JavaScript Certification"></div>
+        <h3>JavaScript Certification – STP Education</h3>
+        <p>3-month intensive JavaScript course covering DOM manipulation and dynamic web logic.</p>
+      </div>
+
+      <div class="cert-card" onclick="openImage(this)">
+        <div class="cert-img-container"><img src="Onkarcss.jpg" alt="CSS Certification"></div>
+        <h3>CSS Certification – STP Education</h3>
+        <p>Web page styling, responsive design layouts, grid system, and CSS animations.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Resume Section -->
+  <section id="resume">
+    <h2 class="section-title">Resume & Background</h2>
+    <p class="section-subtitle">Summary of professional experience, education, and credentials</p>
+
+    <div class="resume-container">
+      <div class="resume-card">
+        <h3><i class="fa-solid fa-user-graduate"></i> Professional Summary</h3>
+        <p>
+          AI & Data Science undergraduate with a Diploma in Computer Engineering and hands-on industrial training in C, C++, Java, Python, and Full-Stack Development. Focused on engineering practical, data-driven, and web-based intelligent solutions.
+        </p>
+      </div>
+
+      <div class="resume-card">
+        <h3><i class="fa-solid fa-briefcase"></i> Industrial Internships</h3>
+        <div style="margin-bottom: 1.5rem;">
+          <h4 style="color: var(--accent-cyan); font-size: 1.05rem;">Data Analytics Intern</h4>
+          <p style="color: var(--text-main); font-weight: 600;">TechnoHacks Solutions Pvt. Ltd., Nashik | Jan 2026 – Feb 2026</p>
+          <ul>
+            <li>Performed data cleaning and statistical analysis using Excel, Python, and Power BI.</li>
+            <li>Built interactive analytics dashboards and calculated KPIs using DAX queries.</li>
+            <li>Analyzed Retail, HR, Academic, and COVID-19 datasets for insights.</li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 style="color: var(--accent-cyan); font-size: 1.05rem;">Full Stack Python Development Intern</h4>
+          <p style="color: var(--text-main); font-weight: 600;">Sumago Infotech Pvt. Ltd., Nashik | June 2024 – July 2024</p>
+          <ul>
+            <li>Engineered web modules using Python, Django, and modern web stack.</li>
+            <li>Implemented database integration, backend logic, and user authentication.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="resume-card">
+        <h3><i class="fa-solid fa-layer-group"></i> Core Skills</h3>
+        <span class="skill-pill">Python</span>
+        <span class="skill-pill">C & C++</span>
+        <span class="skill-pill">Django</span>
+        <span class="skill-pill">JavaScript</span>
+        <span class="skill-pill">SQL</span>
+        <span class="skill-pill">Data Analytics</span>
+        <span class="skill-pill">Problem Solving</span>
+      </div>
+
+      <!-- PDF Preview -->
+      <div class="resume-preview-frame">
+        <iframe src="Onkar Resume Latest (1)_compressed.pdf" title="Onkar Talekar Resume PDF"></iframe>
+      </div>
+
+      <div class="resume-action-btns">
+        <a href="Onkar Resume Latest (1)_compressed.pdf" download="Onkar_Talekar_Resume.pdf" class="btn-primary">
+          <span>Download Resume PDF</span>
+          <i class="fa-solid fa-file-arrow-down"></i>
+        </a>
+        <a href="https://onkartalekar23.github.io/my-resume/" target="_blank" class="btn-secondary">
+          <span>View Online Resume Page</span>
+          <i class="fa-solid fa-globe"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact & Socials Section -->
+  <section id="contact">
+    <h2 class="section-title">Let’s Connect</h2>
+    <p class="section-subtitle">Open for AI/ML roles, full-stack development, and technical collaborations</p>
+
+    <div class="contact-container">
+      <div class="contact-info-card">
+        <div>
+          <h3 style="font-size: 1.8rem; color: var(--accent-cyan); margin-bottom: 1rem;">Get In Touch 🚀</h3>
+          <p style="font-size: 1rem; line-height: 1.7;">
+            Whether you have a project idea, job opportunity, or technical query — feel free to send a message or connect through social channels!
+          </p>
+
+          <div style="margin-top: 2rem;">
+            <p style="margin-bottom: 0.8rem; color: var(--text-main); font-weight: 600;">
+              <i class="fa-solid fa-envelope" style="color: var(--accent-cyan); margin-right: 8px;"></i>
+              onkartalekar23@gmail.com
+            </p>
+            <p style="color: var(--text-main); font-weight: 600;">
+              <i class="fa-solid fa-location-dot" style="color: var(--accent-cyan); margin-right: 8px;"></i>
+              Nashik, Maharashtra, India
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <h4 style="font-size: 1.1rem; color: var(--text-main); margin-bottom: 1rem;">Social Platforms</h4>
+          <div class="social-platforms-grid">
+            <a href="https://github.com/onkartalekar23" target="_blank" class="platform-icon-btn github" title="GitHub"><i class="fa-brands fa-github"></i></a>
+            <a href="https://www.linkedin.com/in/onkar-talekar-497958360" target="_blank" class="platform-icon-btn linkedin" title="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+            <a href="mailto:onkartalekar23@gmail.com" onclick="window.open('https://mail.google.com/mail/?view=cm&fs=1&to=onkartalekar23@gmail.com'); return false;" class="platform-icon-btn email" title="Email"><i class="fa-solid fa-envelope"></i></a>
+            <a href="https://wa.me/qr/753CYNANVRCJO1" target="_blank" class="platform-icon-btn whatsapp" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+            <a href="https://www.instagram.com/_onkar_talekar_" target="_blank" class="platform-icon-btn instagram" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Working FormSubmit Form -->
+      <form class="contact-form-luxury" action="https://formsubmit.co/onkartalekar23@gmail.com" method="POST">
+        <div class="form-group">
+          <input type="text" name="name" placeholder="Your Full Name" required>
+        </div>
+        <div class="form-group">
+          <input type="email" name="email" placeholder="Your Email Address" required>
+        </div>
+        <div class="form-group">
+          <input type="text" name="subject" placeholder="Subject">
+        </div>
+        <div class="form-group">
+          <textarea name="message" placeholder="Write your message here..." required></textarea>
+        </div>
+
+        <!-- FormSubmit Hidden Settings -->
+        <input type="hidden" name="_subject" value="New Message From Portfolio Website">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_template" value="table">
+
+        <button type="submit" class="btn-primary" style="justify-content: center; width: 100%;">
+          <span>Send Message</span>
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Image Lightbox Modal -->
+  <div id="fullscreen" onclick="closeImage()">
+    <span class="close-btn" onclick="closeImage()">&times;</span>
+    <img id="full-img" alt="Enlarged Certificate or Project View">
+  </div>
+
+  <!-- Centered Social Connect Bar -->
+  <div class="connect-bar-centered">
+    <h3 class="connect-title">Connect With Me 🚀</h3>
+    <div class="social-platforms-centered">
+      <a href="https://github.com/onkartalekar23" target="_blank" class="platform-icon-btn github" title="GitHub"><i class="fa-brands fa-github"></i></a>
+      <a href="https://www.linkedin.com/in/onkar-talekar-497958360" target="_blank" class="platform-icon-btn linkedin" title="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+      <a href="mailto:onkartalekar23@gmail.com" onclick="window.open('https://mail.google.com/mail/?view=cm&fs=1&to=onkartalekar23@gmail.com'); return false;" class="platform-icon-btn email" title="Email"><i class="fa-solid fa-envelope"></i></a>
+      <a href="https://wa.me/qr/753CYNANVRCJO1" target="_blank" class="platform-icon-btn whatsapp" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+      <a href="https://www.instagram.com/_onkar_talekar_" target="_blank" class="platform-icon-btn instagram" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2026 Onkar Talekar. All rights reserved. | Built with Passion & AI Engineering</p>
+  </footer>
+
+  <!-- JS -->
+  <script src="data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

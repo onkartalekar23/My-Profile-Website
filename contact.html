@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact | Onkar Talekar</title>
+
+  <!-- Google Fonts & Font Awesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Background Particle Canvas -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- Navigation Bar -->
+  <nav>
+    <div style="display: flex; align-items: center; gap: 0.5rem;">
+      <a href="index.html#home" class="logo-box">
+        <div class="nav-logo">
+          <img src="onkar.png" alt="Onkar Talekar Logo">
+        </div>
+        <span class="logo-text">Onkar Talekar</span>
+      </a>
+      <a href="admin.html" class="admin-nav-badge" title="Admin Portal">
+        <i class="fa-solid fa-lock"></i>
+      </a>
+    </div>
+
+    <ul class="nav-links">
+      <li><a href="home.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="suu.html">Skills</a></li>
+      <li><a href="techstack.html">Tech Stack</a></li>
+      <li><a href="project.html">Projects</a></li>
+      <li><a href="Certifications.html">Certifications</a></li>
+      <li><a href="resume.html">Resume</a></li>
+      <li><a href="contact.html" class="active">Contact</a></li>
+    </ul>
+
+    <button class="mobile-toggle" aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <!-- Contact & Connect Section -->
+  <section id="contact" style="padding-top: 8rem;">
+    <h2 class="section-title">Let’s Connect</h2>
+    <p class="section-subtitle">Whether it’s a project collaboration, job opportunity, or just to say hi — feel free to reach out 🚀</p>
+
+    <div class="contact-container">
+      <div class="contact-info-card">
+        <div>
+          <h3 style="font-size: 1.8rem; color: var(--accent-cyan); margin-bottom: 1rem;">Get In Touch 🚀</h3>
+          <p style="font-size: 1rem; line-height: 1.7;">
+            I am always open to discussing new AI/ML projects, full-stack web applications, and professional opportunities. Feel free to contact me!
+          </p>
+
+          <div style="margin-top: 2rem;">
+            <p style="margin-bottom: 0.8rem; color: var(--text-main); font-weight: 600;">
+              <i class="fa-solid fa-envelope" style="color: var(--accent-cyan); margin-right: 8px;"></i>
+              onkartalekar23@gmail.com
+            </p>
+            <p style="color: var(--text-main); font-weight: 600;">
+              <i class="fa-solid fa-location-dot" style="color: var(--accent-cyan); margin-right: 8px;"></i>
+              Nashik, Maharashtra, India
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <h4 style="font-size: 1.1rem; color: var(--text-main); margin-bottom: 1rem;">Social & Connect Platforms</h4>
+          <div class="social-platforms-grid">
+            <a href="https://github.com/onkartalekar23" target="_blank" class="platform-icon-btn github" title="GitHub"><i class="fa-brands fa-github"></i></a>
+            <a href="https://www.linkedin.com/in/onkar-talekar-497958360" target="_blank" class="platform-icon-btn linkedin" title="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+            <a href="mailto:onkartalekar23@gmail.com" onclick="window.open('https://mail.google.com/mail/?view=cm&fs=1&to=onkartalekar23@gmail.com'); return false;" class="platform-icon-btn email" title="Email"><i class="fa-solid fa-envelope"></i></a>
+            <a href="https://wa.me/qr/753CYNANVRCJO1" target="_blank" class="platform-icon-btn whatsapp" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+            <a href="https://www.instagram.com/_onkar_talekar_" target="_blank" class="platform-icon-btn instagram" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Working FormSubmit Form -->
+      <form class="contact-form-luxury" action="https://formsubmit.co/onkartalekar23@gmail.com" method="POST">
+        <div class="form-group">
+          <input type="text" name="name" placeholder="Your Full Name" required>
+        </div>
+        <div class="form-group">
+          <input type="email" name="email" placeholder="Your Email Address" required>
+        </div>
+        <div class="form-group">
+          <input type="text" name="subject" placeholder="Subject">
+        </div>
+        <div class="form-group">
+          <textarea name="message" placeholder="Your Message..." required></textarea>
+        </div>
+
+        <!-- Hidden FormSubmit Settings -->
+        <input type="hidden" name="_subject" value="New Message From Portfolio Contact Page">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_template" value="table">
+
+        <button type="submit" class="btn-primary" style="justify-content: center; width: 100%;">
+          <span>Send Message</span>
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Centered Social Connect Bar -->
+  <div class="connect-bar-centered">
+    <h3 class="connect-title">Connect With Me 🚀</h3>
+    <div class="social-platforms-centered">
+      <a href="https://github.com/onkartalekar23" target="_blank" class="platform-icon-btn github" title="GitHub"><i class="fa-brands fa-github"></i></a>
+      <a href="https://www.linkedin.com/in/onkar-talekar-497958360" target="_blank" class="platform-icon-btn linkedin" title="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+      <a href="mailto:onkartalekar23@gmail.com" onclick="window.open('https://mail.google.com/mail/?view=cm&fs=1&to=onkartalekar23@gmail.com'); return false;" class="platform-icon-btn email" title="Email"><i class="fa-solid fa-envelope"></i></a>
+      <a href="https://wa.me/qr/753CYNANVRCJO1" target="_blank" class="platform-icon-btn whatsapp" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+      <a href="https://www.instagram.com/_onkar_talekar_" target="_blank" class="platform-icon-btn instagram" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2026 Onkar Talekar. All rights reserved. | Built with Passion & AI Engineering</p>
+  </footer>
+
+  <!-- JS -->
+  <script src="data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

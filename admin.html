@@ -1,0 +1,1893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Onkar Talekar Portfolio</title>
+
+  <!-- Google Fonts & Font Awesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- EmailJS SDK for Email OTP Sending -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+  <style>
+    /* ADMIN PANEL SPECIAL STYLES */
+    .admin-login-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 7, 18, 0.96);
+      backdrop-filter: blur(20px);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .admin-login-card {
+      width: 100%;
+      max-width: 420px;
+      background: var(--bg-card);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 2.5rem;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+      text-align: center;
+    }
+
+    .admin-dashboard {
+      display: none;
+      min-height: 100vh;
+      padding-top: 6rem;
+    }
+
+    .admin-layout {
+      max-width: 1250px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 2rem;
+    }
+
+    .admin-sidebar {
+      background: var(--bg-card);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(16px);
+      border-radius: 20px;
+      padding: 1.5rem;
+      height: fit-content;
+    }
+
+    .admin-tab-btn {
+      width: 100%;
+      padding: 0.9rem 1.2rem;
+      border-radius: 14px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 0.5rem;
+      transition: var(--transition);
+    }
+
+    .admin-tab-btn:hover,
+    .admin-tab-btn.active {
+      background: rgba(0, 242, 254, 0.12);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(0, 242, 254, 0.25);
+    }
+
+    .admin-content-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(16px);
+      border-radius: 24px;
+      padding: 2.2rem;
+    }
+
+    .tab-section {
+      display: none;
+    }
+
+    .tab-section.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.5rem;
+    }
+
+    .admin-table th,
+    .admin-table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--glass-border);
+      font-size: 0.9rem;
+      vertical-align: middle;
+    }
+
+    .admin-table th {
+      color: var(--accent-cyan);
+      font-family: var(--font-heading);
+    }
+
+    .action-icon-btn {
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      border: 1px solid var(--glass-border);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      cursor: pointer;
+      font-size: 0.82rem;
+      transition: var(--transition);
+      margin-right: 0.3rem;
+    }
+
+    .action-icon-btn.edit:hover { background: #3b82f6; color: #fff; }
+    .action-icon-btn.delete:hover { background: #ef4444; color: #fff; }
+    .action-icon-btn.move:hover { background: #10b981; color: #fff; }
+
+    /* Modal Form Overlay */
+    .crud-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 7, 18, 0.92);
+      backdrop-filter: blur(14px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10005;
+      padding: 1.5rem;
+    }
+
+    .crud-modal-content {
+      width: 100%;
+      max-width: 580px;
+      background: var(--bg-card);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 2rem;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+    }
+
+    .file-input-wrapper {
+      background: rgba(3, 7, 18, 0.8);
+      border: 1px dashed var(--glass-border-hover);
+      border-radius: 12px;
+      padding: 1rem;
+      text-align: center;
+      margin-bottom: 0.8rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .file-input-wrapper:hover {
+      border-color: var(--accent-cyan);
+      background: rgba(0, 242, 254, 0.05);
+    }
+
+    @keyframes toastPopIn {
+      from { opacity: 0; transform: scale(0.85) translateY(20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    @keyframes toastPopOut {
+      from { opacity: 1; transform: scale(1) translateY(0); }
+      to { opacity: 0; transform: scale(0.85) translateY(-20px); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Canvas -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- Login Modal (Password Only) -->
+  <div id="loginOverlay" class="admin-login-overlay">
+    <div class="admin-login-card">
+      <div class="nav-logo" style="margin: 0 auto 1.2rem; width: 60px; height: 60px;">
+        <img src="onkar.png" alt="Logo">
+      </div>
+      <h2 style="font-size: 1.8rem; margin-bottom: 0.4rem;">Admin Portal</h2>
+      <p style="font-size: 0.9rem; margin-bottom: 1.8rem; color: var(--text-muted);">Enter password to manage portfolio details</p>
+
+      <form id="loginForm">
+        <div class="form-group" style="margin-bottom: 1.2rem;">
+          <input type="password" id="adminPass" placeholder="Enter Password" required autocomplete="off">
+        </div>
+        <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">
+          <span>Unlock Admin Panel</span>
+          <i class="fa-solid fa-lock-open"></i>
+        </button>
+        <a href="#" onclick="openForgotPasswordModal(); return false;" style="color: var(--accent-cyan); font-size: 0.85rem; text-decoration: none; display: block; margin-top: 1.2rem; text-align: center;">
+          <i class="fa-solid fa-key"></i> Forgot Password? Reset via Email OTP
+        </a>
+      </form>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard Container -->
+  <div id="adminDashboard" class="admin-dashboard">
+    
+    <!-- Top Nav Bar -->
+    <nav style="position: fixed; top: 0; left: 0; width: 100%; z-index: 9999; background: var(--bg-nav); backdrop-filter: blur(16px); border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem;">
+      <div class="logo-box">
+        <div class="nav-logo">
+          <img src="onkar.png" alt="Logo">
+        </div>
+        <span class="logo-text">Onkar's Admin Panel ⚡</span>
+      </div>
+
+      <div style="display: flex; gap: 1rem; align-items: center;">
+        <a href="index.html" class="btn-secondary" style="padding: 0.5rem 1.2rem; font-size: 0.85rem; z-index: 10000; position: relative;">
+          <i class="fa-solid fa-globe"></i> View Live Site
+        </a>
+        <button type="button" id="btnNavChangePassword" onclick="openChangePasswordModal()" class="btn-secondary" style="padding: 0.5rem 1.2rem; font-size: 0.85rem; border-color: var(--accent-cyan); color: var(--accent-cyan); cursor: pointer; pointer-events: auto; z-index: 10000; position: relative;">
+          <i class="fa-solid fa-key"></i> Change Password
+        </button>
+        <button type="button" onclick="handleResetDefaults()" class="btn-secondary" style="padding: 0.5rem 1.2rem; font-size: 0.85rem; border-color: #f59e0b; color: #f59e0b; cursor: pointer; pointer-events: auto; z-index: 10000; position: relative;">
+          <i class="fa-solid fa-rotate-left"></i> Reset Defaults
+        </button>
+        <button type="button" onclick="handleLogout()" class="btn-secondary" style="padding: 0.5rem 1.2rem; font-size: 0.85rem; border-color: #ef4444; color: #ef4444; cursor: pointer; pointer-events: auto; z-index: 10000; position: relative;">
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </button>
+      </div>
+    </nav>
+
+    <div class="admin-layout">
+      <!-- Sidebar -->
+      <div class="admin-sidebar">
+        <button class="admin-tab-btn active" onclick="switchTab('profile')"><i class="fa-solid fa-user"></i> Profile & Bio</button>
+        <button class="admin-tab-btn" onclick="switchTab('about')"><i class="fa-solid fa-address-card"></i> About Page</button>
+        <button class="admin-tab-btn" onclick="switchTab('social')"><i class="fa-solid fa-share-nodes"></i> Social Links</button>
+        <button class="admin-tab-btn" onclick="switchTab('resume')"><i class="fa-solid fa-file-pdf"></i> Resume & Experience</button>
+        <button class="admin-tab-btn" onclick="switchTab('techstack')"><i class="fa-solid fa-layer-group"></i> Tech Stack</button>
+        <button class="admin-tab-btn" onclick="switchTab('projects')"><i class="fa-solid fa-folder"></i> Projects</button>
+        <button class="admin-tab-btn" onclick="switchTab('skills')"><i class="fa-solid fa-code"></i> Skills Icons</button>
+        <button class="admin-tab-btn" onclick="switchTab('certifications')"><i class="fa-solid fa-certificate"></i> Certifications</button>
+      </div>
+
+      <!-- Main Content Panel -->
+      <div class="admin-content-panel">
+        
+        <!-- SECTION 1: PROFILE TAB -->
+        <div id="tab-profile" class="tab-section active">
+          <h2 style="color: var(--accent-cyan); margin-bottom: 1.5rem;">Edit Profile & Hero Information</h2>
+          <form id="profileForm" onsubmit="saveProfileChanges(event)">
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.4rem;">Full Name</label>
+              <input type="text" id="profName" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.4rem;">Tagline / Role Title</label>
+              <input type="text" id="profTagline" required>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+              <div class="form-group">
+                <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.4rem;">Location</label>
+                <input type="text" id="profLoc" required>
+              </div>
+              <div class="form-group">
+                <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.4rem;">Expertise</label>
+                <input type="text" id="profExp" required>
+              </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.4rem;">Email Address</label>
+              <input type="email" id="profEmail" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+              <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.4rem;">Bio Paragraph 1</label>
+              <textarea id="profBio1" style="height: 90px;" required></textarea>
+            </div>
+            <button type="submit" class="btn-primary">
+              <span>Save Profile Changes</span>
+              <i class="fa-solid fa-floppy-disk"></i>
+            </button>
+          </form>
+        </div>
+
+        <!-- SECTION 2: PROJECTS TAB -->
+        <div id="tab-projects" class="tab-section">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 style="color: var(--accent-cyan);">Manage Projects</h2>
+            <button onclick="openAddProjectModal()" class="btn-primary" style="padding: 0.6rem 1.4rem; font-size: 0.85rem;">
+              <i class="fa-solid fa-plus"></i> Add New Project
+            </button>
+          </div>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Order</th>
+                <th>Image</th>
+                <th>Title</th>
+                <th>Tech Tags</th>
+                <th>Demo Link</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="projectsTableBody"></tbody>
+          </table>
+
+          <!-- Card 2: Project Snapshot Gallery -->
+          <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--glass-border); border-radius: 20px; padding: 1.8rem; margin-top: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
+              <h3 style="color: var(--accent-cyan); font-size: 1.15rem;"><i class="fa-solid fa-images"></i> Project Snapshot Gallery Images</h3>
+              <button type="button" onclick="openAddGalleryModal()" class="btn-primary" style="padding: 0.5rem 1.2rem; font-size: 0.85rem;">
+                <i class="fa-solid fa-plus"></i> Add Gallery Image
+              </button>
+            </div>
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Order</th>
+                  <th>Image</th>
+                  <th>Title / Caption</th>
+                  <th>Image File / Path</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="galleryTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- SECTION 3: SKILLS TAB -->
+        <div id="tab-skills" class="tab-section">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 style="color: var(--accent-cyan);">Manage Skills (Reorder / PNG Upload)</h2>
+            <button onclick="openAddSkillModal()" class="btn-primary" style="padding: 0.6rem 1.4rem; font-size: 0.85rem;">
+              <i class="fa-solid fa-plus"></i> Add Skill
+            </button>
+          </div>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Order</th>
+                <th>Icon</th>
+                <th>Skill Name</th>
+                <th>Icon File / Path</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="skillsTableBody"></tbody>
+          </table>
+        </div>
+
+        <!-- SECTION 4: CERTIFICATIONS TAB -->
+        <div id="tab-certifications" class="tab-section">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 style="color: var(--accent-cyan);">Manage Certifications (Reorder / Upload)</h2>
+            <button onclick="openAddCertModal()" class="btn-primary" style="padding: 0.6rem 1.4rem; font-size: 0.85rem;">
+              <i class="fa-solid fa-plus"></i> Add Certification
+            </button>
+          </div>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Order</th>
+                <th>Certificate</th>
+                <th>Title</th>
+                <th>Image File / Path</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="certsTableBody"></tbody>
+          </table>
+        </div>
+
+        <!-- SECTION 5: RESUME & EXPERIENCE TAB -->
+        <div id="tab-resume" class="tab-section">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 style="color: var(--accent-cyan);"><i class="fa-solid fa-file-pdf"></i> Manage Resume & Experience</h2>
+          </div>
+
+          <!-- Card 1: Resume PDF File Uploader -->
+          <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--glass-border); border-radius: 20px; padding: 1.8rem; margin-bottom: 2rem;">
+            <h3 style="color: var(--text-main); font-size: 1.15rem; margin-bottom: 0.5rem;"><i class="fa-solid fa-cloud-arrow-up" style="color: var(--accent-cyan);"></i> Update Resume / CV PDF File</h3>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.2rem;">
+              Upload your latest Resume PDF from your computer or enter a filename. This will automatically update all download buttons and preview windows across your portfolio.
+            </p>
+
+            <form onsubmit="saveResumeTabChanges(event)">
+              <div class="form-group" style="margin-bottom: 1rem;">
+                <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.4rem;">Resume PDF File Path / Base64 Data</label>
+                <button type="button" onclick="document.getElementById('tabResumePdfFile').click()" class="btn-secondary" style="width:100%; justify-content:center; margin-bottom:0.8rem; padding:0.7rem;">
+                  📄 Choose New Resume PDF File from Computer
+                </button>
+                <input type="file" accept=".pdf" onchange="previewUploadPdf(this, 'profResumeTab')" style="display: none;" id="tabResumePdfFile">
+                <input type="text" id="profResumeTab" placeholder="e.g. Onkar Resume Latest (1)_compressed.pdf" required style="font-size: 0.95rem;">
+              </div>
+              <button type="submit" class="btn-primary" style="padding: 0.7rem 1.6rem;">
+                <span>Save Resume PDF</span>
+                <i class="fa-solid fa-floppy-disk"></i>
+              </button>
+            </form>
+          </div>
+
+          <!-- Card 2: Professional Summary -->
+          <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--glass-border); border-radius: 20px; padding: 1.8rem; margin-bottom: 2rem;">
+            <h3 style="color: var(--text-main); font-size: 1.15rem; margin-bottom: 0.5rem;"><i class="fa-solid fa-user-tie" style="color: var(--accent-cyan);"></i> Professional Summary Text</h3>
+            <form onsubmit="saveProfSummaryChanges(event)">
+              <div class="form-group" style="margin-bottom: 1rem;">
+                <textarea id="profSummaryInput" style="height: 100px; width: 100%; font-size: 0.95rem; line-height: 1.6;" required></textarea>
+              </div>
+              <button type="submit" class="btn-primary" style="padding: 0.7rem 1.6rem;">
+                <span>Save Professional Summary</span>
+                <i class="fa-solid fa-floppy-disk"></i>
+              </button>
+            </form>
+          </div>
+
+          <!-- Card 3: Education Timeline Table -->
+          <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--glass-border); border-radius: 20px; padding: 1.8rem; margin-bottom: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
+              <h3 style="color: var(--accent-cyan); font-size: 1.15rem;"><i class="fa-solid fa-graduation-cap"></i> Education Timeline</h3>
+              <button type="button" onclick="openAddEduModal()" class="btn-primary" style="padding: 0.5rem 1.2rem; font-size: 0.85rem;">
+                <i class="fa-solid fa-plus"></i> Add Education Entry
+              </button>
+            </div>
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Degree / Qualification</th>
+                  <th>Years / Duration</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="educationTableBody"></tbody>
+            </table>
+          </div>
+
+          <!-- Card 4: Internships & Experience Table -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
+            <h3 style="color: var(--accent-cyan); font-size: 1.15rem;"><i class="fa-solid fa-briefcase"></i> Internships & Experience Timeline</h3>
+            <button onclick="openAddInternshipModal()" class="btn-primary" style="padding: 0.5rem 1.2rem; font-size: 0.85rem;">
+              <i class="fa-solid fa-plus"></i> Add Internship
+            </button>
+          </div>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Role</th>
+                <th>Company</th>
+                <th>Duration</th>
+                <th>Actions</th>
+              </tr>
+            <tbody id="internshipsTableBody"></tbody>
+          </table>
+
+          <!-- Card 5: Key Projects Showcase -->
+          <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--glass-border); border-radius: 20px; padding: 1.8rem; margin-top: 2rem; margin-bottom: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
+              <h3 style="color: var(--accent-cyan); font-size: 1.15rem;"><i class="fa-solid fa-folder-open"></i> Key Projects Showcase (Resume Card 4)</h3>
+              <button type="button" onclick="openAddKeyProjectModal()" class="btn-primary" style="padding: 0.5rem 1.2rem; font-size: 0.85rem;">
+                <i class="fa-solid fa-plus"></i> Add Showcase Project
+              </button>
+            </div>
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Project Title</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="keyProjectsTableBody"></tbody>
+            </table>
+          </div>
+
+          <!-- Card 6: Core Skills & Proficiencies Pills -->
+          <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--glass-border); border-radius: 20px; padding: 1.8rem; margin-bottom: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
+              <h3 style="color: var(--accent-cyan); font-size: 1.15rem;"><i class="fa-solid fa-code"></i> Core Skills Pills (Resume Card 5)</h3>
+              <button type="button" onclick="openAddCoreSkillModal()" class="btn-primary" style="padding: 0.5rem 1.2rem; font-size: 0.85rem;">
+                <i class="fa-solid fa-plus"></i> Add Core Skill Pill
+              </button>
+            </div>
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Skill Name</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="coreSkillsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- SECTION 6: TECH STACK TAB -->
+        <div id="tab-techstack" class="tab-section">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 style="color: var(--accent-cyan);"><i class="fa-solid fa-layer-group"></i> Manage Tech Stack & Proficiency</h2>
+            <button onclick="openAddTechStackModal()" class="btn-primary" style="padding: 0.6rem 1.4rem; font-size: 0.85rem;">
+              <i class="fa-solid fa-plus"></i> Add Tech Stack Item
+            </button>
+          </div>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Order</th>
+                <th>Technology Name</th>
+                <th>Category</th>
+                <th>Proficiency %</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="techStackTableBody"></tbody>
+          </table>
+        </div>
+
+        <!-- SECTION 7: SOCIAL MEDIA LINKS TAB -->
+        <div id="tab-social" class="tab-section">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 style="color: var(--accent-cyan);"><i class="fa-solid fa-share-nodes"></i> Manage Social Media Links</h2>
+          </div>
+
+          <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--glass-border); border-radius: 20px; padding: 2rem; max-width: 720px;">
+            <form onsubmit="saveSocialMediaLinks(event)">
+              <div class="form-group" style="margin-bottom: 1.2rem;">
+                <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.4rem;">
+                  <i class="fa-brands fa-github" style="color: var(--accent-cyan); width: 20px;"></i> GitHub Profile Link
+                </label>
+                <input type="url" id="socialGithub" placeholder="https://github.com/yourusername" required style="font-size: 0.95rem;">
+              </div>
+
+              <div class="form-group" style="margin-bottom: 1.2rem;">
+                <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.4rem;">
+                  <i class="fa-brands fa-linkedin" style="color: var(--accent-cyan); width: 20px;"></i> LinkedIn Profile Link
+                </label>
+                <input type="url" id="socialLinkedin" placeholder="https://www.linkedin.com/in/yourusername" required style="font-size: 0.95rem;">
+              </div>
+
+              <div class="form-group" style="margin-bottom: 1.2rem;">
+                <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.4rem;">
+                  <i class="fa-brands fa-whatsapp" style="color: #25D366; width: 20px;"></i> WhatsApp Link / Number
+                </label>
+                <input type="url" id="socialWhatsapp" placeholder="https://wa.me/qr/..." required style="font-size: 0.95rem;">
+              </div>
+
+              <div class="form-group" style="margin-bottom: 1.2rem;">
+                <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.4rem;">
+                  <i class="fa-brands fa-instagram" style="color: #E1306C; width: 20px;"></i> Instagram Profile Link
+                </label>
+                <input type="url" id="socialInstagram" placeholder="https://www.instagram.com/yourusername" required style="font-size: 0.95rem;">
+              </div>
+
+              <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.4rem;">
+                  <i class="fa-solid fa-envelope" style="color: var(--accent-cyan); width: 20px;"></i> Contact Email Address
+                </label>
+                <input type="email" id="socialEmail" placeholder="yourname@gmail.com" required style="font-size: 0.95rem;">
+              </div>
+
+              <button type="submit" class="btn-primary" style="padding: 0.8rem 2rem;">
+                <span>Save Social Links</span>
+                <i class="fa-solid fa-floppy-disk"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- SECTION 8: ABOUT PAGE TAB -->
+        <div id="tab-about" class="tab-section">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 style="color: var(--accent-cyan);"><i class="fa-solid fa-address-card"></i> Manage About Me Page</h2>
+          </div>
+
+          <!-- Card 1: Subtitle & Headline -->
+          <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--glass-border); border-radius: 20px; padding: 1.8rem; margin-bottom: 1.8rem;">
+            <h3 style="color: var(--text-main); font-size: 1.15rem; margin-bottom: 1rem;"><i class="fa-solid fa-heading" style="color: var(--accent-cyan);"></i> About Subtitle & Main Headline</h3>
+            <form onsubmit="saveAboutTitles(event)">
+              <div class="form-group" style="margin-bottom: 1rem;">
+                <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.4rem;">About Section Subtitle</label>
+                <input type="text" id="aboutSubtitleInput" placeholder="Bridging Artificial Intelligence, Data Analytics, and Web Development" required style="font-size: 0.95rem;">
+              </div>
+              <div class="form-group" style="margin-bottom: 1.2rem;">
+                <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.4rem;">Main Headline Title (H2)</label>
+                <input type="text" id="aboutHeadlineInput" placeholder="Passionate Technologist & AI Enthusiast" required style="font-size: 0.95rem;">
+              </div>
+              <button type="submit" class="btn-primary" style="padding: 0.6rem 1.4rem;">
+                <span>Save Subtitle & Headline</span>
+                <i class="fa-solid fa-floppy-disk"></i>
+              </button>
+            </form>
+          </div>
+
+          <!-- Card 2: Profile Photo -->
+          <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--glass-border); border-radius: 20px; padding: 1.8rem; margin-bottom: 1.8rem;">
+            <h3 style="color: var(--text-main); font-size: 1.15rem; margin-bottom: 1rem;"><i class="fa-solid fa-camera" style="color: var(--accent-cyan);"></i> About Profile Photo</h3>
+            <form onsubmit="saveAboutPhoto(event)">
+              <div class="form-group" style="margin-bottom: 1.2rem;">
+                <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.4rem;">Profile Photo (Upload PNG/JPG or Enter Path)</label>
+                <button type="button" onclick="document.getElementById('aboutPhotoFile').click()" class="btn-secondary" style="width:100%; justify-content:center; margin-bottom:0.6rem; padding:0.5rem;">📁 Choose Profile Image File from Computer</button>
+                <input type="file" accept="image/*" onchange="previewUploadImage(this, 'aboutPhotoPreview', 'aboutPhotoInput')" style="display: none;" id="aboutPhotoFile">
+                <input type="text" id="aboutPhotoInput" placeholder="e.g. onkar.png" oninput="document.getElementById('aboutPhotoPreview').src=this.value" required style="font-size: 0.95rem;">
+                <img id="aboutPhotoPreview" src="onkar.png" style="max-width: 110px; max-height: 110px; border-radius: 50%; margin-top: 10px; display: block; border: 2px solid var(--accent-cyan);">
+              </div>
+              <button type="submit" class="btn-primary" style="padding: 0.6rem 1.4rem;">
+                <span>Save Profile Photo</span>
+                <i class="fa-solid fa-floppy-disk"></i>
+              </button>
+            </form>
+          </div>
+
+          <!-- Card 3: Bio Paragraph 1 -->
+          <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--glass-border); border-radius: 20px; padding: 1.8rem; margin-bottom: 1.8rem;">
+            <h3 style="color: var(--text-main); font-size: 1.15rem; margin-bottom: 1rem;"><i class="fa-solid fa-paragraph" style="color: var(--accent-cyan);"></i> Bio Paragraph 1</h3>
+            <form onsubmit="saveAboutBio1(event)">
+              <div class="form-group" style="margin-bottom: 1.2rem;">
+                <textarea id="aboutBio1Input" style="height: 90px; width: 100%; font-size: 0.95rem; line-height: 1.6;" required></textarea>
+              </div>
+              <button type="submit" class="btn-primary" style="padding: 0.6rem 1.4rem;">
+                <span>Save Bio Paragraph 1</span>
+                <i class="fa-solid fa-floppy-disk"></i>
+              </button>
+            </form>
+          </div>
+
+          <!-- Card 4: Bio Paragraph 2 -->
+          <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--glass-border); border-radius: 20px; padding: 1.8rem; margin-bottom: 1.8rem;">
+            <h3 style="color: var(--text-main); font-size: 1.15rem; margin-bottom: 1rem;"><i class="fa-solid fa-paragraph" style="color: var(--accent-cyan);"></i> Bio Paragraph 2</h3>
+            <form onsubmit="saveAboutBio2(event)">
+              <div class="form-group" style="margin-bottom: 1.2rem;">
+                <textarea id="aboutBio2Input" style="height: 90px; width: 100%; font-size: 0.95rem; line-height: 1.6;" required></textarea>
+              </div>
+              <button type="submit" class="btn-primary" style="padding: 0.6rem 1.4rem;">
+                <span>Save Bio Paragraph 2</span>
+                <i class="fa-solid fa-floppy-disk"></i>
+              </button>
+            </form>
+          </div>
+
+          <!-- Card 5: Bio Paragraph 3 -->
+          <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--glass-border); border-radius: 20px; padding: 1.8rem; margin-bottom: 1.8rem;">
+            <h3 style="color: var(--text-main); font-size: 1.15rem; margin-bottom: 1rem;"><i class="fa-solid fa-paragraph" style="color: var(--accent-cyan);"></i> Bio Paragraph 3</h3>
+            <form onsubmit="saveAboutBio3(event)">
+              <div class="form-group" style="margin-bottom: 1.2rem;">
+                <textarea id="aboutBio3Input" style="height: 90px; width: 100%; font-size: 0.95rem; line-height: 1.6;" required></textarea>
+              </div>
+              <button type="submit" class="btn-primary" style="padding: 0.6rem 1.4rem;">
+                <span>Save Bio Paragraph 3</span>
+                <i class="fa-solid fa-floppy-disk"></i>
+              </button>
+            </form>
+          </div>
+
+          <!-- Card 6: About Skill Tags (Pills) -->
+          <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--glass-border); border-radius: 20px; padding: 1.8rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
+              <h3 style="color: var(--accent-cyan); font-size: 1.15rem;"><i class="fa-solid fa-tags"></i> About Skill Tags (Pills)</h3>
+              <button type="button" onclick="openAddAboutTagModal()" class="btn-primary" style="padding: 0.5rem 1.2rem; font-size: 0.85rem;">
+                <i class="fa-solid fa-plus"></i> Add Skill Tag
+              </button>
+            </div>
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th style="width: 90px;">Order</th>
+                  <th>Tag Name</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="aboutTagsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- GENERIC CRUD MODAL (ADD / EDIT ITEMS) -->
+  <div id="crudModal" class="crud-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 7, 18, 0.85); backdrop-filter: blur(16px); z-index: 10000; align-items: center; justify-content: center;">
+    <div class="crud-modal-content" style="background: rgba(15, 23, 42, 0.95); border: 1px solid var(--glass-border); border-radius: 24px; padding: 2.2rem; width: 90%; max-width: 520px; max-height: 85vh; overflow-y: auto; box-shadow: 0 25px 60px rgba(0,0,0,0.8);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h3 id="crudModalTitle" style="color: var(--accent-cyan); font-size: 1.3rem; margin: 0;">Add Item</h3>
+        <span onclick="closeCrudModal()" style="font-size: 1.8rem; cursor: pointer; color: var(--text-muted); line-height: 1;">&times;</span>
+      </div>
+      <form onsubmit="handleCrudSubmit(event)">
+        <div id="crudFields"></div>
+        <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.8rem;">
+          <button type="button" onclick="closeCrudModal()" class="btn-secondary" style="padding: 0.6rem 1.4rem;">Cancel</button>
+          <button type="submit" class="btn-primary" style="padding: 0.6rem 1.6rem;">
+            <span>Save Changes</span>
+            <i class="fa-solid fa-floppy-disk"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- FORGOT PASSWORD / OTP MODAL -->
+  <div id="forgotPasswordModal" class="crud-modal">
+    <div class="crud-modal-content" style="max-width: 460px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
+        <h3 style="color: var(--accent-cyan); font-size: 1.3rem;"><i class="fa-solid fa-key"></i> Reset Admin Password</h3>
+        <span onclick="closeForgotPasswordModal()" style="font-size: 1.8rem; cursor: pointer; color: var(--text-muted);">&times;</span>
+      </div>
+
+      <!-- STEP 1: Direct Send OTP to Admin -->
+      <div id="otpStep1">
+        <div style="background: rgba(0, 242, 254, 0.08); border: 1px solid rgba(0, 242, 254, 0.2); border-radius: 16px; padding: 1.5rem; text-align: center; margin-bottom: 1.5rem;">
+          <i class="fa-solid fa-shield-halved" style="font-size: 2.4rem; color: var(--accent-cyan); margin-bottom: 0.8rem; display: block;"></i>
+          <h4 style="color: var(--text-main); font-size: 1.05rem; margin-bottom: 0.4rem;">Send Reset OTP Code</h4>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">
+            Click below to automatically dispatch a 6-digit OTP code directly to your email inbox.
+          </p>
+        </div>
+        <form onsubmit="sendOTPToEmail(event)">
+          <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 0.9rem;">
+            <span>Send OTP to Admin</span>
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
+        </form>
+      </div>
+
+      <!-- STEP 2: Verify OTP Only -->
+      <div id="otpStep2" style="display: none;">
+        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 14px; padding: 1rem; text-align: center; margin-bottom: 1.2rem;">
+          <i class="fa-solid fa-envelope-circle-check" style="font-size: 1.8rem; color: #10b981; margin-bottom: 0.4rem; display: block;"></i>
+          <p style="font-size: 0.9rem; color: #10b981; font-weight: 600;">OTP Sent to Your Email!</p>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Check <strong>onk*******23@gmail.com</strong> on your phone for the code.</p>
+        </div>
+
+        <form onsubmit="verifyOTPOnly(event)">
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.4rem;">Enter 6-Digit Security OTP</label>
+            <input type="text" id="otpCodeInput" placeholder="Enter 6-Digit OTP" maxlength="6" required style="letter-spacing: 6px; font-weight: 700; text-align: center; font-size: 1.1rem; padding: 0.8rem;">
+          </div>
+          <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 0.85rem;">
+            <span>Verify OTP Code</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </form>
+      </div>
+
+      <!-- STEP 3: Enter & Confirm New Password -->
+      <div id="otpStep3" style="display: none;">
+        <div style="background: rgba(0, 242, 254, 0.08); border: 1px solid rgba(0, 242, 254, 0.2); border-radius: 14px; padding: 1rem; text-align: center; margin-bottom: 1.2rem;">
+          <i class="fa-solid fa-lock" style="font-size: 1.8rem; color: var(--accent-cyan); margin-bottom: 0.4rem; display: block;"></i>
+          <p style="font-size: 0.9rem; color: var(--accent-cyan); font-weight: 600;">OTP Verified Successfully!</p>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Set your new admin password below.</p>
+        </div>
+
+        <form onsubmit="saveNewPasswordAfterOTP(event)">
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.4rem;">New Password</label>
+            <input type="password" id="otpNewPassInput" placeholder="Enter New Password" required autocomplete="off">
+          </div>
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.4rem;">Confirm New Password</label>
+            <input type="password" id="otpConfPassInput" placeholder="Confirm New Password" required autocomplete="off">
+          </div>
+          <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 0.85rem;">
+            <span>Set New Password</span>
+            <i class="fa-solid fa-check-double"></i>
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CHANGE PASSWORD MODAL (INSIDE DASHBOARD) -->
+  <div id="changePasswordModal" class="crud-modal">
+    <div class="crud-modal-content" style="max-width: 440px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h3 style="color: var(--accent-cyan); font-size: 1.3rem;"><i class="fa-solid fa-key"></i> Change Admin Password</h3>
+        <span onclick="closeChangePasswordModal()" style="font-size: 1.8rem; cursor: pointer; color: var(--text-muted);">&times;</span>
+      </div>
+      <form onsubmit="handleDashboardPasswordChange(event)">
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.4rem;">Current Password</label>
+          <input type="password" id="dashCurrPass" placeholder="Enter Current Password" required autocomplete="off">
+        </div>
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.4rem;">New Password</label>
+          <input type="password" id="dashNewPass" placeholder="Enter New Password" required autocomplete="off">
+        </div>
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.4rem;">Confirm New Password</label>
+          <input type="password" id="dashConfPass" placeholder="Confirm New Password" required autocomplete="off">
+        </div>
+        <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 0.85rem;">
+          <span>Update Password</span>
+          <i class="fa-solid fa-floppy-disk"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Data Script & Admin JS Logic -->
+  <script src="data.js"></script>
+  <script src="script.js"></script>
+
+  <script>
+    let currentData = getPortfolioData();
+    let activeModalType = "";
+    let activeEditId = null;
+    let generatedOTP = null;
+
+    // EmailJS Live Credentials Configuration
+    window.EMAILJS_PUBLIC_KEY = "9vdIcHIzzg6UABsnb";
+    window.EMAILJS_SERVICE_ID = "service_r4thfrn";
+    window.EMAILJS_TEMPLATE_ID = "template_c2noycn";
+
+    if (window.emailjs && window.EMAILJS_PUBLIC_KEY) {
+      emailjs.init(window.EMAILJS_PUBLIC_KEY);
+    }
+
+    function openForgotPasswordModal() {
+      document.getElementById("otpStep1").style.display = "block";
+      document.getElementById("otpStep2").style.display = "none";
+      document.getElementById("otpStep3").style.display = "none";
+      document.getElementById("forgotPasswordModal").style.display = "flex";
+    }
+
+    function closeForgotPasswordModal() {
+      document.getElementById("forgotPasswordModal").style.display = "none";
+    }
+
+    function sendOTPToEmail(e) {
+      if (e) e.preventDefault();
+      const email = "onkartalekar23@gmail.com";
+
+      // Generate 6-digit random OTP
+      generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+      const currentTimeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }) + " (" + new Date().toLocaleDateString() + ")";
+
+      // 1. Send via EmailJS
+      if (window.emailjs && window.EMAILJS_PUBLIC_KEY && window.EMAILJS_SERVICE_ID && window.EMAILJS_TEMPLATE_ID) {
+        const templateParams = {
+          passcode: generatedOTP,   // Matching {{passcode}} in EmailJS Template
+          time: currentTimeStr,     // Matching {{time}} in EmailJS Template
+          to_email: email,
+          user_email: email,
+          email: email,
+          otp_code: generatedOTP,
+          otp: generatedOTP,
+          code: generatedOTP,
+          number: generatedOTP,
+          message: "Your Admin Password Reset OTP Code is: " + generatedOTP
+        };
+
+        emailjs.send(window.EMAILJS_SERVICE_ID, window.EMAILJS_TEMPLATE_ID, templateParams)
+        .then((response) => {
+          console.log("✅ EmailJS OTP Sent Successfully!", response.status, response.text);
+        }).catch(err => {
+          console.error("❌ EmailJS Error:", err);
+        });
+      }
+
+      // 2. Dual Send via FormSubmit Direct API
+      try {
+        fetch("https://formsubmit.co/ajax/onkartalekar23@gmail.com", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify({
+            _subject: "🔑 Your Admin Password Reset OTP Code: " + generatedOTP,
+            email: email,
+            OTP_CODE: generatedOTP,
+            message: "Your 6-Digit Admin Password Reset OTP Code is: " + generatedOTP
+          })
+        }).catch(e => console.log("FormSubmit handle", e));
+      } catch(err) {}
+
+      document.getElementById("otpStep1").style.display = "none";
+      document.getElementById("otpStep2").style.display = "block";
+      document.getElementById("otpStep3").style.display = "none";
+    }
+
+    // LUXURY CENTERED TOAST NOTIFICATION SYSTEM
+    function showToast(message, type = "info") {
+      let toastContainer = document.getElementById("toastContainer");
+      if (!toastContainer) {
+        toastContainer = document.createElement("div");
+        toastContainer.id = "toastContainer";
+        toastContainer.style.cssText = `
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          z-index: 20000;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          pointer-events: none;
+        `;
+        document.body.appendChild(toastContainer);
+      }
+
+      const toast = document.createElement("div");
+      const isError = type === "error";
+      const icon = isError ? `<i class="fa-solid fa-circle-xmark" style="color: #ef4444; font-size: 2.2rem; margin-bottom: 0.6rem; display: block;"></i>` : `<i class="fa-solid fa-circle-check" style="color: #10b981; font-size: 2.2rem; margin-bottom: 0.6rem; display: block;"></i>`;
+
+      toast.style.cssText = `
+        background: rgba(15, 23, 42, 0.96);
+        border: 1px solid ${isError ? 'rgba(239, 68, 68, 0.5)' : 'rgba(0, 242, 254, 0.5)'};
+        backdrop-filter: blur(20px);
+        box-shadow: 0 25px 60px rgba(0,0,0,0.9), 0 0 35px ${isError ? 'rgba(239, 68, 68, 0.25)' : 'rgba(0, 242, 254, 0.25)'};
+        border-radius: 22px;
+        padding: 1.8rem 2.4rem;
+        text-align: center;
+        color: #f8fafc;
+        font-family: var(--font-heading);
+        font-weight: 600;
+        font-size: 1.05rem;
+        pointer-events: auto;
+        animation: toastPopIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        margin-bottom: 1rem;
+        max-width: 400px;
+        width: 90vw;
+      `;
+
+      toast.innerHTML = `
+        ${icon}
+        <div>${message}</div>
+      `;
+
+      toastContainer.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.animation = "toastPopOut 0.3s ease forwards";
+        setTimeout(() => toast.remove(), 300);
+      }, 2400);
+    }
+
+    function verifyOTPOnly(e) {
+      e.preventDefault();
+      const userOTP = document.getElementById("otpCodeInput").value.trim();
+
+      if (userOTP !== generatedOTP) {
+        showToast("Incorrect OTP Code! Please check the 6-digit code sent to your email.", "error");
+        return;
+      }
+
+      // OTP is correct! Advance to Step 3
+      document.getElementById("otpStep1").style.display = "none";
+      document.getElementById("otpStep2").style.display = "none";
+      document.getElementById("otpStep3").style.display = "block";
+      showToast("OTP Verified Successfully!", "success");
+    }
+
+    function saveNewPasswordAfterOTP(e) {
+      e.preventDefault();
+      const newP = document.getElementById("otpNewPassInput").value.trim();
+      const confP = document.getElementById("otpConfPassInput").value.trim();
+
+      if (!newP) {
+        showToast("Please enter a valid new password.", "error");
+        return;
+      }
+
+      if (newP !== confP) {
+        showToast("New Password and Confirm Password do not match!", "error");
+        return;
+      }
+
+      setAdminPassword(newP);
+      closeForgotPasswordModal();
+      showToast("Password reset successfully! You can now log in with your new password.", "success");
+    }
+
+    // PASSWORD LOGIN CHECK
+    document.getElementById("loginForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const pass = document.getElementById("adminPass").value.trim();
+
+      if (pass === getAdminPassword()) {
+        sessionStorage.setItem("admin_logged_in", "true");
+        showDashboard();
+        showToast("Welcome to Admin Dashboard!", "success");
+      } else {
+        showToast("Incorrect password! Please try again.", "error");
+      }
+    });
+
+    if (sessionStorage.getItem("admin_logged_in") === "true") {
+      showDashboard();
+    }
+
+    function showDashboard() {
+      document.getElementById("loginOverlay").style.display = "none";
+      document.getElementById("adminDashboard").style.display = "block";
+      loadAdminData();
+    }
+
+    function handleLogout() {
+      sessionStorage.removeItem("admin_logged_in");
+      window.location.reload();
+    }
+
+    function handleResetDefaults() {
+      if (confirm("Are you sure you want to reset all portfolio data to original default values?")) {
+        currentData = resetPortfolioData();
+        loadAdminData();
+        showToast("Portfolio data reset to default values!", "success");
+      }
+    }
+
+    // DASHBOARD CHANGE PASSWORD MODAL HANDLERS
+    window.openChangePasswordModal = function() {
+      const c = document.getElementById("dashCurrPass");
+      const n = document.getElementById("dashNewPass");
+      const conf = document.getElementById("dashConfPass");
+      if (c) c.value = "";
+      if (n) n.value = "";
+      if (conf) conf.value = "";
+      const modal = document.getElementById("changePasswordModal");
+      if (modal) {
+        modal.style.display = "flex";
+      }
+    };
+
+    function closeChangePasswordModal() {
+      const modal = document.getElementById("changePasswordModal");
+      if (modal) {
+        modal.style.display = "none";
+      }
+    }
+
+    function handleDashboardPasswordChange(e) {
+      e.preventDefault();
+      const currP = document.getElementById("dashCurrPass").value.trim();
+      const newP = document.getElementById("dashNewPass").value.trim();
+      const confP = document.getElementById("dashConfPass").value.trim();
+
+      if (currP !== getAdminPassword()) {
+        showToast("Current password is incorrect!", "error");
+        return;
+      }
+
+      if (!newP) {
+        showToast("Please enter a valid new password!", "error");
+        return;
+      }
+
+      if (newP !== confP) {
+        showToast("New Password and Confirm Password do not match!", "error");
+        return;
+      }
+
+      setAdminPassword(newP);
+      closeChangePasswordModal();
+      showToast("Password updated successfully!", "success");
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll(".admin-tab-btn").forEach(btn => btn.classList.remove("active"));
+      document.querySelectorAll(".tab-section").forEach(sec => sec.classList.remove("active"));
+      
+      event.currentTarget.classList.add("active");
+      document.getElementById(`tab-${tabId}`).classList.add("active");
+    }
+
+    function loadAdminData() {
+      currentData = getPortfolioData();
+      
+      // Populate Profile Form
+      document.getElementById("profName").value = currentData.profile.name || "";
+      document.getElementById("profTagline").value = currentData.profile.tagline || "";
+      document.getElementById("profLoc").value = currentData.profile.location || "";
+      document.getElementById("profExp").value = currentData.profile.expertise || "";
+      document.getElementById("profEmail").value = currentData.profile.email || "";
+      document.getElementById("profBio1").value = currentData.profile.bioParagraph1 || "";
+      if (document.getElementById("profResumeTab")) document.getElementById("profResumeTab").value = currentData.profile.resumePdf || "Onkar Resume Latest (1)_compressed.pdf";
+      if (document.getElementById("profSummaryInput")) document.getElementById("profSummaryInput").value = currentData.profile.professionalSummary || "";
+
+      // Populate Social Media Links
+      if (document.getElementById("socialGithub")) document.getElementById("socialGithub").value = currentData.profile.github || "";
+      if (document.getElementById("socialLinkedin")) document.getElementById("socialLinkedin").value = currentData.profile.linkedin || "";
+      if (document.getElementById("socialWhatsapp")) document.getElementById("socialWhatsapp").value = currentData.profile.whatsapp || "";
+      if (document.getElementById("socialInstagram")) document.getElementById("socialInstagram").value = currentData.profile.instagram || "";
+      if (document.getElementById("socialEmail")) document.getElementById("socialEmail").value = currentData.profile.email || "";
+
+      // Populate About Page Controls
+      if (document.getElementById("aboutSubtitleInput")) document.getElementById("aboutSubtitleInput").value = currentData.profile.aboutSubtitle || "";
+      if (document.getElementById("aboutHeadlineInput")) document.getElementById("aboutHeadlineInput").value = currentData.profile.aboutHeadline || "";
+      if (document.getElementById("aboutPhotoInput")) {
+        document.getElementById("aboutPhotoInput").value = currentData.profile.aboutPhoto || "onkar.png";
+        document.getElementById("aboutPhotoPreview").src = currentData.profile.aboutPhoto || "onkar.png";
+      }
+      if (document.getElementById("aboutBio1Input")) document.getElementById("aboutBio1Input").value = currentData.profile.bioParagraph1 || "";
+      if (document.getElementById("aboutBio2Input")) document.getElementById("aboutBio2Input").value = currentData.profile.bioParagraph2 || "";
+      if (document.getElementById("aboutBio3Input")) document.getElementById("aboutBio3Input").value = currentData.profile.bioParagraph3 || "";
+
+      // Populate About Skill Tags
+      const atBody = document.getElementById("aboutTagsTableBody");
+      if (atBody) {
+        atBody.innerHTML = (currentData.aboutTags || []).map((at, idx) => `
+          <tr>
+            <td>
+              <button class="action-icon-btn move" onclick="moveItemUp('aboutTags', ${idx})" ${idx === 0 ? 'disabled style="opacity:0.3;"' : ''} title="Move Up"><i class="fa-solid fa-arrow-up"></i></button>
+              <button class="action-icon-btn move" onclick="moveItemDown('aboutTags', ${idx})" ${idx === (currentData.aboutTags || []).length - 1 ? 'disabled style="opacity:0.3;"' : ''} title="Move Down"><i class="fa-solid fa-arrow-down"></i></button>
+            </td>
+            <td><strong>${at.name}</strong></td>
+            <td>
+              <button class="action-icon-btn edit" onclick="openEditAboutTag('${at.id}')"><i class="fa-solid fa-pen"></i></button>
+              <button class="action-icon-btn delete" onclick="deleteItem('aboutTags', '${at.id}')"><i class="fa-solid fa-trash"></i></button>
+            </td>
+          </tr>
+        `).join("");
+      }
+
+      // Populate Education Timeline
+      const eduBody = document.getElementById("educationTableBody");
+      if (eduBody) {
+        eduBody.innerHTML = (currentData.education || []).map(e => `
+          <tr>
+            <td><strong>${e.degree}</strong></td>
+            <td>${e.duration}</td>
+            <td>
+              <button class="action-icon-btn edit" onclick="openEditEdu('${e.id}')"><i class="fa-solid fa-pen"></i></button>
+              <button class="action-icon-btn delete" onclick="deleteItem('education', '${e.id}')"><i class="fa-solid fa-trash"></i></button>
+            </td>
+          </tr>
+        `).join("");
+      }
+
+      // Populate Projects with Reordering
+      const projBody = document.getElementById("projectsTableBody");
+      projBody.innerHTML = currentData.projects.map((p, idx) => `
+        <tr>
+          <td>
+            <button class="action-icon-btn move" onclick="moveItemUp('projects', ${idx})" ${idx === 0 ? 'disabled style="opacity:0.3;"' : ''} title="Move Up"><i class="fa-solid fa-arrow-up"></i></button>
+            <button class="action-icon-btn move" onclick="moveItemDown('projects', ${idx})" ${idx === currentData.projects.length - 1 ? 'disabled style="opacity:0.3;"' : ''} title="Move Down"><i class="fa-solid fa-arrow-down"></i></button>
+          </td>
+          <td><img src="${p.image}" alt="${p.title}" style="width: 54px; height: 38px; object-fit: cover; border-radius: 8px; border: 1px solid var(--glass-border);"></td>
+          <td><strong>${p.title}</strong></td>
+          <td>${(p.tags || []).join(", ")}</td>
+          <td><a href="${p.demoLink}" target="_blank" style="color: var(--accent-cyan);">Link</a></td>
+          <td>
+            <button class="action-icon-btn edit" onclick="openEditProject('${p.id}')"><i class="fa-solid fa-pen"></i></button>
+            <button class="action-icon-btn delete" onclick="deleteItem('projects', '${p.id}')"><i class="fa-solid fa-trash"></i></button>
+          </td>
+        </tr>
+      `).join("");
+
+      // Populate Project Gallery with Reordering
+      const galleryBody = document.getElementById("galleryTableBody");
+      if (galleryBody) {
+        galleryBody.innerHTML = (currentData.projectGallery || []).map((g, idx) => `
+          <tr>
+            <td>
+              <button class="action-icon-btn move" onclick="moveItemUp('projectGallery', ${idx})" ${idx === 0 ? 'disabled style="opacity:0.3;"' : ''} title="Move Up"><i class="fa-solid fa-arrow-up"></i></button>
+              <button class="action-icon-btn move" onclick="moveItemDown('projectGallery', ${idx})" ${idx === (currentData.projectGallery || []).length - 1 ? 'disabled style="opacity:0.3;"' : ''} title="Move Down"><i class="fa-solid fa-arrow-down"></i></button>
+            </td>
+            <td><img src="${g.image}" alt="${g.title || ''}" style="width: 54px; height: 38px; object-fit: cover; border-radius: 8px; border: 1px solid var(--glass-border);"></td>
+            <td><strong>${g.title || 'Untitled Image'}</strong></td>
+            <td style="color: var(--text-muted); font-size: 0.82rem; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${g.image}</td>
+            <td>
+              <button class="action-icon-btn edit" onclick="openEditGalleryModal('${g.id}')"><i class="fa-solid fa-pen"></i></button>
+              <button class="action-icon-btn delete" onclick="deleteItem('projectGallery', '${g.id}')"><i class="fa-solid fa-trash"></i></button>
+            </td>
+          </tr>
+        `).join("");
+      }
+
+      // Populate Skills with Reordering
+      const skillBody = document.getElementById("skillsTableBody");
+      skillBody.innerHTML = currentData.skills.map((s, idx) => `
+        <tr>
+          <td>
+            <button class="action-icon-btn move" onclick="moveItemUp('skills', ${idx})" ${idx === 0 ? 'disabled style="opacity:0.3;"' : ''} title="Move Up"><i class="fa-solid fa-arrow-up"></i></button>
+            <button class="action-icon-btn move" onclick="moveItemDown('skills', ${idx})" ${idx === currentData.skills.length - 1 ? 'disabled style="opacity:0.3;"' : ''} title="Move Down"><i class="fa-solid fa-arrow-down"></i></button>
+          </td>
+          <td><img src="${s.icon}" alt="${s.name}" style="width: 38px; height: 38px; object-fit: contain; background: rgba(255,255,255,0.05); padding: 4px; border-radius: 8px;"></td>
+          <td><strong>${s.name}</strong></td>
+          <td style="color: var(--text-muted); font-size: 0.82rem; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${s.icon}</td>
+          <td>
+            <button class="action-icon-btn delete" onclick="deleteItem('skills', '${s.id}')"><i class="fa-solid fa-trash"></i></button>
+          </td>
+        </tr>
+      `).join("");
+
+      // Populate Certs with Reordering
+      const certBody = document.getElementById("certsTableBody");
+      certBody.innerHTML = currentData.certifications.map((c, idx) => `
+        <tr>
+          <td>
+            <button class="action-icon-btn move" onclick="moveItemUp('certifications', ${idx})" ${idx === 0 ? 'disabled style="opacity:0.3;"' : ''} title="Move Up"><i class="fa-solid fa-arrow-up"></i></button>
+            <button class="action-icon-btn move" onclick="moveItemDown('certifications', ${idx})" ${idx === currentData.certifications.length - 1 ? 'disabled style="opacity:0.3;"' : ''} title="Move Down"><i class="fa-solid fa-arrow-down"></i></button>
+          </td>
+          <td><img src="${c.image}" alt="${c.title}" style="width: 54px; height: 38px; object-fit: cover; border-radius: 8px; border: 1px solid var(--glass-border);"></td>
+          <td><strong>${c.title}</strong></td>
+          <td style="color: var(--text-muted); font-size: 0.82rem; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${c.image}</td>
+          <td>
+            <button class="action-icon-btn delete" onclick="deleteItem('certifications', '${c.id}')"><i class="fa-solid fa-trash"></i></button>
+          </td>
+        </tr>
+      `).join("");
+
+      // Populate Internships
+      const internBody = document.getElementById("internshipsTableBody");
+      if (internBody) {
+        internBody.innerHTML = currentData.internships.map(i => `
+          <tr>
+            <td><strong>${i.role}</strong></td>
+            <td>${i.company}</td>
+            <td>${i.duration}</td>
+            <td>
+              <button class="action-icon-btn edit" onclick="openEditInternship('${i.id}')"><i class="fa-solid fa-pen"></i></button>
+              <button class="action-icon-btn delete" onclick="deleteItem('internships', '${i.id}')"><i class="fa-solid fa-trash"></i></button>
+            </td>
+          </tr>
+        `).join("");
+      }
+
+      // Populate Key Projects Showcase
+      const kpBody = document.getElementById("keyProjectsTableBody");
+      if (kpBody) {
+        kpBody.innerHTML = (currentData.keyProjectsShowcase || []).map(kp => `
+          <tr>
+            <td><strong>${kp.title}</strong></td>
+            <td>
+              <button class="action-icon-btn edit" onclick="openEditKeyProject('${kp.id}')"><i class="fa-solid fa-pen"></i></button>
+              <button class="action-icon-btn delete" onclick="deleteItem('keyProjectsShowcase', '${kp.id}')"><i class="fa-solid fa-trash"></i></button>
+            </td>
+          </tr>
+        `).join("");
+      }
+
+      // Populate Core Skills Pills
+      const csBody = document.getElementById("coreSkillsTableBody");
+      if (csBody) {
+        csBody.innerHTML = (currentData.coreSkillsShowcase || []).map(cs => `
+          <tr>
+            <td><strong>${cs.name}</strong></td>
+            <td>
+              <button class="action-icon-btn edit" onclick="openEditCoreSkill('${cs.id}')"><i class="fa-solid fa-pen"></i></button>
+              <button class="action-icon-btn delete" onclick="deleteItem('coreSkillsShowcase', '${cs.id}')"><i class="fa-solid fa-trash"></i></button>
+            </td>
+          </tr>
+        `).join("");
+      }
+
+      // Populate Tech Stack Table with Reordering
+      const tsBody = document.getElementById("techStackTableBody");
+      if (tsBody) {
+        tsBody.innerHTML = (currentData.techStack || []).map((t, idx) => `
+          <tr>
+            <td>
+              <button class="action-icon-btn move" onclick="moveItemUp('techStack', ${idx})" ${idx === 0 ? 'disabled style="opacity:0.3;"' : ''} title="Move Up"><i class="fa-solid fa-arrow-up"></i></button>
+              <button class="action-icon-btn move" onclick="moveItemDown('techStack', ${idx})" ${idx === (currentData.techStack || []).length - 1 ? 'disabled style="opacity:0.3;"' : ''} title="Move Down"><i class="fa-solid fa-arrow-down"></i></button>
+            </td>
+            <td><strong>${t.name}</strong></td>
+            <td><span style="color: var(--accent-cyan); font-weight: 500;">${t.category}</span></td>
+            <td>${t.proficiency}%</td>
+            <td>
+              <button class="action-icon-btn edit" onclick="openEditTechStack('${t.id}')"><i class="fa-solid fa-pen"></i></button>
+              <button class="action-icon-btn delete" onclick="deleteItem('techStack', '${t.id}')"><i class="fa-solid fa-trash"></i></button>
+            </td>
+          </tr>
+        `).join("");
+      }
+    }
+
+    // SEQUENCE REORDERING FUNCTIONS
+    function moveItemUp(type, index) {
+      if (index > 0) {
+        const temp = currentData[type][index];
+        currentData[type][index] = currentData[type][index - 1];
+        currentData[type][index - 1] = temp;
+        savePortfolioData(currentData);
+        loadAdminData();
+      }
+    }
+
+    function moveItemDown(type, index) {
+      if (index < currentData[type].length - 1) {
+        const temp = currentData[type][index];
+        currentData[type][index] = currentData[type][index + 1];
+        currentData[type][index + 1] = temp;
+        savePortfolioData(currentData);
+        loadAdminData();
+      }
+    }
+
+    function saveProfileChanges(e) {
+      e.preventDefault();
+      currentData.profile.name = document.getElementById("profName").value.trim();
+      currentData.profile.tagline = document.getElementById("profTagline").value.trim();
+      currentData.profile.location = document.getElementById("profLoc").value.trim();
+      currentData.profile.expertise = document.getElementById("profExp").value.trim();
+      currentData.profile.email = document.getElementById("profEmail").value.trim();
+      currentData.profile.bioParagraph1 = document.getElementById("profBio1").value.trim();
+
+      savePortfolioData(currentData);
+      showToast("Profile details updated successfully!", "success");
+    }
+
+    function saveResumeTabChanges(e) {
+      e.preventDefault();
+      const pdfVal = document.getElementById("profResumeTab").value.trim();
+      if (!pdfVal) {
+        showToast("Please select or enter a valid Resume PDF!", "error");
+        return;
+      }
+      currentData.profile.resumePdf = pdfVal;
+      savePortfolioData(currentData);
+      showToast("Resume PDF updated successfully across portfolio!", "success");
+    }
+
+    function saveSocialMediaLinks(e) {
+      e.preventDefault();
+      currentData.profile.github = document.getElementById("socialGithub").value.trim();
+      currentData.profile.linkedin = document.getElementById("socialLinkedin").value.trim();
+      currentData.profile.whatsapp = document.getElementById("socialWhatsapp").value.trim();
+      currentData.profile.instagram = document.getElementById("socialInstagram").value.trim();
+      currentData.profile.email = document.getElementById("socialEmail").value.trim();
+
+      savePortfolioData(currentData);
+      showToast("Social media links updated successfully across all pages!", "success");
+    }
+
+    function saveAboutTitles(e) {
+      e.preventDefault();
+      currentData.profile.aboutSubtitle = document.getElementById("aboutSubtitleInput").value.trim();
+      currentData.profile.aboutHeadline = document.getElementById("aboutHeadlineInput").value.trim();
+      savePortfolioData(currentData);
+      showToast("Subtitle & Headline updated successfully!", "success");
+    }
+
+    function saveAboutPhoto(e) {
+      e.preventDefault();
+      currentData.profile.aboutPhoto = document.getElementById("aboutPhotoInput").value.trim();
+      savePortfolioData(currentData);
+      showToast("About Profile Photo updated successfully!", "success");
+    }
+
+    function saveAboutBio1(e) {
+      e.preventDefault();
+      currentData.profile.bioParagraph1 = document.getElementById("aboutBio1Input").value.trim();
+      savePortfolioData(currentData);
+      showToast("Bio Paragraph 1 updated successfully!", "success");
+    }
+
+    function saveAboutBio2(e) {
+      e.preventDefault();
+      currentData.profile.bioParagraph2 = document.getElementById("aboutBio2Input").value.trim();
+      savePortfolioData(currentData);
+      showToast("Bio Paragraph 2 updated successfully!", "success");
+    }
+
+    function saveAboutBio3(e) {
+      e.preventDefault();
+      currentData.profile.bioParagraph3 = document.getElementById("aboutBio3Input").value.trim();
+      savePortfolioData(currentData);
+      showToast("Bio Paragraph 3 updated successfully!", "success");
+    }
+
+    function deleteItem(type, id) {
+      if (confirm("Are you sure you want to delete this item?")) {
+        currentData[type] = currentData[type].filter(item => item.id !== id);
+        savePortfolioData(currentData);
+        loadAdminData();
+        showToast("Item deleted successfully!", "success");
+      }
+    }
+
+    // FILE READER HELPER FOR PDF & IMAGE PREVIEWS & BASE64 STORAGE
+    function previewUploadPdf(fileInput, textInputId) {
+      if (fileInput.files && fileInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById(textInputId).value = e.target.result;
+          showToast("New Resume PDF selected! Click 'Save Resume PDF' to apply across site.", "success");
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+      }
+    }
+
+    function previewUploadImage(fileInput, previewImgId, textInputId) {
+      if (fileInput.files && fileInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById(previewImgId).src = e.target.result;
+          document.getElementById(textInputId).value = e.target.result;
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+      }
+    }
+
+    // MODAL HANDLERS
+    function openCrudModal(title) {
+      document.getElementById("crudModalTitle").textContent = title;
+      document.getElementById("crudModal").style.display = "flex";
+    }
+
+    function closeCrudModal() {
+      document.getElementById("crudModal").style.display = "none";
+    }
+
+    function openAddProjectModal() {
+      activeModalType = "add_project";
+      activeEditId = null;
+      document.getElementById("crudFields").innerHTML = `
+        <div class="form-group" style="margin-bottom: 1rem;"><label>Title</label><input type="text" id="fTitle" required></div>
+        <div class="form-group" style="margin-bottom: 1rem;"><label>Description</label><textarea id="fDesc" required></textarea></div>
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label>Project Image (Upload PNG/JPG or Enter Path)</label>
+          <div class="file-input-wrapper">
+            <i class="fa-solid fa-cloud-arrow-up" style="font-size: 1.5rem; color: var(--accent-cyan); margin-bottom: 0.4rem; display: block;"></i>
+            <span style="font-size: 0.85rem;">Click to Upload Image File from PC</span>
+            <input type="file" accept="image/*" onchange="previewUploadImage(this, 'pImgPreview', 'fImg')" style="display: none;" id="fImgFile">
+          </div>
+          <button type="button" onclick="document.getElementById('fImgFile').click()" class="btn-secondary" style="width:100%; justify-content:center; margin-bottom:0.6rem; padding:0.5rem;">📁 Choose File from Computer</button>
+          <input type="text" id="fImg" placeholder="Or enter filename e.g. medicare.png" oninput="document.getElementById('pImgPreview').src=this.value" required>
+          <img id="pImgPreview" src="" style="max-width: 140px; max-height: 90px; border-radius: 10px; margin-top: 8px; display: block; border: 1px solid var(--glass-border);">
+        </div>
+        <div class="form-group" style="margin-bottom: 1rem;"><label>Tags (comma separated e.g. Python, ML, Web)</label><input type="text" id="fTags" required></div>
+        <div class="form-group"><label>Demo Link</label><input type="text" id="fLink" required></div>
+      `;
+      openCrudModal("Add New Project");
+    }
+
+    function openEditProject(id) {
+      activeModalType = "edit_project";
+      activeEditId = id;
+      const proj = currentData.projects.find(p => p.id === id);
+      if (!proj) return;
+
+      document.getElementById("crudFields").innerHTML = `
+        <div class="form-group" style="margin-bottom: 1rem;"><label>Title</label><input type="text" id="fTitle" value="${proj.title}" required></div>
+        <div class="form-group" style="margin-bottom: 1rem;"><label>Description</label><textarea id="fDesc" required>${proj.description}</textarea></div>
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label>Project Image (Upload PNG/JPG or Enter Path)</label>
+          <button type="button" onclick="document.getElementById('fImgFile').click()" class="btn-secondary" style="width:100%; justify-content:center; margin-bottom:0.6rem; padding:0.5rem;">📁 Choose New Image File</button>
+          <input type="file" accept="image/*" onchange="previewUploadImage(this, 'pImgPreview', 'fImg')" style="display: none;" id="fImgFile">
+          <input type="text" id="fImg" value="${proj.image}" oninput="document.getElementById('pImgPreview').src=this.value" required>
+          <img id="pImgPreview" src="${proj.image}" style="max-width: 140px; max-height: 90px; border-radius: 10px; margin-top: 8px; display: block; border: 1px solid var(--glass-border);">
+        </div>
+        <div class="form-group" style="margin-bottom: 1rem;"><label>Tags</label><input type="text" id="fTags" value="${(proj.tags || []).join(", ")}" required></div>
+        <div class="form-group"><label>Demo Link</label><input type="text" id="fLink" value="${proj.demoLink}" required></div>
+      `;
+      openCrudModal("Edit Project");
+    }
+
+    function openAddGalleryModal() {
+      activeModalType = "add_gallery";
+      activeEditId = null;
+      document.getElementById("crudFields").innerHTML = `
+        <div class="form-group" style="margin-bottom: 1rem;"><label>Image Title / Caption</label><input type="text" id="fGalTitle" placeholder="e.g. Cake Shop Project" required></div>
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label>Gallery Image (Upload PNG/JPG or Enter Path)</label>
+          <button type="button" onclick="document.getElementById('fGalImgFile').click()" class="btn-secondary" style="width:100%; justify-content:center; margin-bottom:0.6rem; padding:0.5rem;">📁 Choose Image File from Computer</button>
+          <input type="file" accept="image/*" onchange="previewUploadImage(this, 'galImgPreview', 'fGalImg')" style="display: none;" id="fGalImgFile">
+          <input type="text" id="fGalImg" placeholder="e.g. cake.jpeg" oninput="document.getElementById('galImgPreview').src=this.value" required>
+          <img id="galImgPreview" src="" style="max-width: 140px; max-height: 90px; border-radius: 10px; margin-top: 8px; display: block; border: 1px solid var(--glass-border);">
+        </div>
+      `;
+      openCrudModal("Add Gallery Image");
+    }
+
+    function openEditGalleryModal(id) {
+      activeModalType = "edit_gallery";
+      activeEditId = id;
+      const g = (currentData.projectGallery || []).find(item => item.id === id);
+      if (!g) return;
+
+      document.getElementById("crudFields").innerHTML = `
+        <div class="form-group" style="margin-bottom: 1rem;"><label>Image Title / Caption</label><input type="text" id="fGalTitle" value="${g.title || ''}" required></div>
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label>Gallery Image (Upload PNG/JPG or Enter Path)</label>
+          <button type="button" onclick="document.getElementById('fGalImgFile').click()" class="btn-secondary" style="width:100%; justify-content:center; margin-bottom:0.6rem; padding:0.5rem;">📁 Choose New Image File</button>
+          <input type="file" accept="image/*" onchange="previewUploadImage(this, 'galImgPreview', 'fGalImg')" style="display: none;" id="fGalImgFile">
+          <input type="text" id="fGalImg" value="${g.image}" oninput="document.getElementById('galImgPreview').src=this.value" required>
+          <img id="galImgPreview" src="${g.image}" style="max-width: 140px; max-height: 90px; border-radius: 10px; margin-top: 8px; display: block; border: 1px solid var(--glass-border);">
+        </div>
+      `;
+      openCrudModal("Edit Gallery Image");
+    }
+
+    function openAddSkillModal() {
+      activeModalType = "add_skill";
+      document.getElementById("crudFields").innerHTML = `
+        <div class="form-group" style="margin-bottom: 1rem;"><label>Skill Name (e.g. Python)</label><input type="text" id="fSkillName" required></div>
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label>Skill PNG Icon (Upload PNG/JPG File or Enter Path)</label>
+          <button type="button" onclick="document.getElementById('fSkillIconFile').click()" class="btn-secondary" style="width:100%; justify-content:center; margin-bottom:0.6rem; padding:0.5rem;">📁 Choose Skill PNG File</button>
+          <input type="file" accept="image/*" onchange="previewUploadImage(this, 'sIconPreview', 'fSkillIcon')" style="display: none;" id="fSkillIconFile">
+          <input type="text" id="fSkillIcon" placeholder="e.g. python.png" oninput="document.getElementById('sIconPreview').src=this.value" required>
+          <img id="sIconPreview" src="" style="max-width: 60px; max-height: 60px; border-radius: 10px; margin-top: 8px; display: block; background: rgba(255,255,255,0.05); padding: 4px;">
+        </div>
+      `;
+      openCrudModal("Add New Skill");
+    }
+
+    function openAddCertModal() {
+      activeModalType = "add_cert";
+      document.getElementById("crudFields").innerHTML = `
+        <div class="form-group" style="margin-bottom: 1rem;"><label>Certificate Title</label><input type="text" id="fCertTitle" required></div>
+        <div class="form-group" style="margin-bottom: 1rem;"><label>Description</label><textarea id="fCertDesc" required></textarea></div>
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label>Certificate Image (Upload JPG/PNG File or Enter Path)</label>
+          <button type="button" onclick="document.getElementById('fCertImgFile').click()" class="btn-secondary" style="width:100%; justify-content:center; margin-bottom:0.6rem; padding:0.5rem;">📁 Choose Certificate File</button>
+          <input type="file" accept="image/*" onchange="previewUploadImage(this, 'cImgPreview', 'fCertImg')" style="display: none;" id="fCertImgFile">
+          <input type="text" id="fCertImg" placeholder="e.g. onkarsqlda.jpg" oninput="document.getElementById('cImgPreview').src=this.value" required>
+          <img id="cImgPreview" src="" style="max-width: 140px; max-height: 90px; border-radius: 10px; margin-top: 8px; display: block; border: 1px solid var(--glass-border);">
+        </div>
+      `;
+      openCrudModal("Add New Certification");
+    }
+
+    function openAddEduModal() {
+      activeModalType = "add_edu";
+      document.getElementById("crudFields").innerHTML = `
+        <div class="form-group" style="margin-bottom: 1rem;"><label>Degree / Qualification Title</label><input type="text" id="fEduDegree" placeholder="e.g. B.E. in Computer Science" required></div>
+        <div class="form-group"><label>Years / Duration</label><input type="text" id="fEduDur" placeholder="e.g. 2022–2025" required></div>
+      `;
+      openCrudModal("Add Education Entry");
+    }
+
+    function openEditEdu(id) {
+      activeModalType = "edit_edu";
+      activeEditId = id;
+      const edu = (currentData.education || []).find(e => e.id === id);
+      if (!edu) return;
+
+      document.getElementById("crudFields").innerHTML = `
+        <div class="form-group" style="margin-bottom: 1rem;"><label>Degree / Qualification Title</label><input type="text" id="fEduDegree" value="${edu.degree}" required></div>
+        <div class="form-group"><label>Years / Duration</label><input type="text" id="fEduDur" value="${edu.duration}" required></div>
+      `;
+      openCrudModal("Edit Education Entry");
+    }
+
+    function openAddKeyProjectModal() {
+      activeModalType = "add_key_project";
+      document.getElementById("crudFields").innerHTML = `
+        <div class="form-group"><label>Key Project Title</label><input type="text" id="fKpTitle" placeholder="e.g. Drug Recommendation & Govt Assistant" required></div>
+      `;
+      openCrudModal("Add Key Project Showcase");
+    }
+
+    function openEditKeyProject(id) {
+      activeModalType = "edit_key_project";
+      activeEditId = id;
+      const kp = (currentData.keyProjectsShowcase || []).find(k => k.id === id);
+      if (!kp) return;
+
+      document.getElementById("crudFields").innerHTML = `
+        <div class="form-group"><label>Key Project Title</label><input type="text" id="fKpTitle" value="${kp.title}" required></div>
+      `;
+      openCrudModal("Edit Key Project Showcase");
+    }
+
+    function openAddCoreSkillModal() {
+      activeModalType = "add_core_skill";
+      document.getElementById("crudFields").innerHTML = `
+        <div class="form-group"><label>Core Skill Name</label><input type="text" id="fCsName" placeholder="e.g. PyTorch, React, SQL" required></div>
+      `;
+      openCrudModal("Add Core Skill Pill");
+    }
+
+    function openEditCoreSkill(id) {
+      activeModalType = "edit_core_skill";
+      activeEditId = id;
+      const cs = (currentData.coreSkillsShowcase || []).find(s => s.id === id);
+      if (!cs) return;
+
+      document.getElementById("crudFields").innerHTML = `
+        <div class="form-group"><label>Core Skill Name</label><input type="text" id="fCsName" value="${cs.name}" required></div>
+      `;
+      openCrudModal("Edit Core Skill Pill");
+    }
+
+    function openAddAboutTagModal() {
+      activeModalType = "add_about_tag";
+      document.getElementById("crudFields").innerHTML = `
+        <div class="form-group"><label>Skill Tag Name</label><input type="text" id="fAtName" placeholder="e.g. Python Developer, AI Student" required></div>
+      `;
+      openCrudModal("Add About Skill Tag");
+    }
+
+    function openEditAboutTag(id) {
+      activeModalType = "edit_about_tag";
+      activeEditId = id;
+      const at = (currentData.aboutTags || []).find(t => t.id === id);
+      if (!at) return;
+
+      document.getElementById("crudFields").innerHTML = `
+        <div class="form-group"><label>Skill Tag Name</label><input type="text" id="fAtName" value="${at.name}" required></div>
+      `;
+      openCrudModal("Edit About Skill Tag");
+    }
+
+    function openAddInternshipModal() {
+      activeModalType = "add_internship";
+      document.getElementById("crudFields").innerHTML = `
+        <div class="form-group" style="margin-bottom: 1rem;"><label>Role Title</label><input type="text" id="fIntRole" required></div>
+        <div class="form-group" style="margin-bottom: 1rem;"><label>Company Name</label><input type="text" id="fIntComp" required></div>
+        <div class="form-group" style="margin-bottom: 1rem;"><label>Duration</label><input type="text" id="fIntDur" placeholder="e.g. Jan 2026 - Feb 2026" required></div>
+        <div class="form-group"><label>Points (comma separated)</label><textarea id="fIntPts" required></textarea></div>
+      `;
+      openCrudModal("Add Internship Experience");
+    }
+
+    function openEditInternship(id) {
+      activeModalType = "edit_internship";
+      activeEditId = id;
+      const intern = (currentData.internships || []).find(i => i.id === id);
+      if (!intern) return;
+
+      document.getElementById("crudFields").innerHTML = `
+        <div class="form-group" style="margin-bottom: 1rem;"><label>Role Title</label><input type="text" id="fIntRole" value="${intern.role}" required></div>
+        <div class="form-group" style="margin-bottom: 1rem;"><label>Company Name</label><input type="text" id="fIntComp" value="${intern.company}" required></div>
+        <div class="form-group" style="margin-bottom: 1rem;"><label>Duration</label><input type="text" id="fIntDur" value="${intern.duration}" required></div>
+        <div class="form-group"><label>Points (comma separated)</label><textarea id="fIntPts" required>${(intern.points || []).join(", ")}</textarea></div>
+      `;
+      openCrudModal("Edit Internship Experience");
+    }
+
+    function saveProfSummaryChanges(e) {
+      e.preventDefault();
+      const val = document.getElementById("profSummaryInput").value.trim();
+      currentData.profile.professionalSummary = val;
+      savePortfolioData(currentData);
+      showToast("Professional summary updated successfully!", "success");
+    }
+
+    function openChangePasswordModal() {
+      activeModalType = "change_password";
+      document.getElementById("crudFields").innerHTML = `
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.4rem;">Current Password</label>
+          <input type="password" id="fCurrPass" placeholder="Enter Current Password" required autocomplete="off">
+        </div>
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.4rem;">New Password</label>
+          <input type="password" id="fNewPass" placeholder="Enter New Password" required autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.4rem;">Confirm New Password</label>
+          <input type="password" id="fConfPass" placeholder="Confirm New Password" required autocomplete="off">
+        </div>
+      `;
+      openCrudModal("Change Admin Password");
+    }
+
+    function handleCrudSubmit(e) {
+      e.preventDefault();
+      
+      if (activeModalType === "change_password") {
+        const currP = document.getElementById("fCurrPass").value.trim();
+        const newP = document.getElementById("fNewPass").value.trim();
+        const confP = document.getElementById("fConfPass").value.trim();
+
+        if (currP !== getAdminPassword()) {
+          showToast("Current Password is incorrect!", "error");
+          return;
+        }
+
+        if (!newP) {
+          showToast("Please enter a valid new password!", "error");
+          return;
+        }
+
+        if (newP !== confP) {
+          showToast("New Password and Confirm Password do not match!", "error");
+          return;
+        }
+
+        setAdminPassword(newP);
+        closeCrudModal();
+        showToast("Password changed successfully!", "success");
+        return;
+      }
+
+      if (activeModalType === "add_edu") {
+        if (!currentData.education) currentData.education = [];
+        currentData.education.push({
+          id: "e_" + Date.now(),
+          degree: document.getElementById("fEduDegree").value.trim(),
+          duration: document.getElementById("fEduDur").value.trim()
+        });
+      } else if (activeModalType === "edit_edu") {
+        const idx = (currentData.education || []).findIndex(e => e.id === activeEditId);
+        if (idx !== -1) {
+          currentData.education[idx] = {
+            id: activeEditId,
+            degree: document.getElementById("fEduDegree").value.trim(),
+            duration: document.getElementById("fEduDur").value.trim()
+          };
+        }
+      } else if (activeModalType === "add_project") {
+        const newProj = {
+          id: "p_" + Date.now(),
+          title: document.getElementById("fTitle").value.trim(),
+          description: document.getElementById("fDesc").value.trim(),
+          image: document.getElementById("fImg").value.trim(),
+          tags: document.getElementById("fTags").value.split(",").map(t => t.trim()),
+          demoLink: document.getElementById("fLink").value.trim()
+        };
+        currentData.projects.push(newProj);
+      } else if (activeModalType === "edit_project") {
+        const projIndex = currentData.projects.findIndex(p => p.id === activeEditId);
+        if (projIndex !== -1) {
+          currentData.projects[projIndex] = {
+            id: activeEditId,
+            title: document.getElementById("fTitle").value.trim(),
+            description: document.getElementById("fDesc").value.trim(),
+            image: document.getElementById("fImg").value.trim(),
+            tags: document.getElementById("fTags").value.split(",").map(t => t.trim()),
+            demoLink: document.getElementById("fLink").value.trim()
+          };
+        }
+      } else if (activeModalType === "add_gallery") {
+        if (!currentData.projectGallery) currentData.projectGallery = [];
+        currentData.projectGallery.push({
+          id: "pg_" + Date.now(),
+          title: document.getElementById("fGalTitle").value.trim(),
+          image: document.getElementById("fGalImg").value.trim()
+        });
+      } else if (activeModalType === "edit_gallery") {
+        const idx = (currentData.projectGallery || []).findIndex(g => g.id === activeEditId);
+        if (idx !== -1) {
+          currentData.projectGallery[idx] = {
+            id: activeEditId,
+            title: document.getElementById("fGalTitle").value.trim(),
+            image: document.getElementById("fGalImg").value.trim()
+          };
+        }
+      } else if (activeModalType === "add_skill") {
+        currentData.skills.push({
+          id: "s_" + Date.now(),
+          name: document.getElementById("fSkillName").value.trim(),
+          icon: document.getElementById("fSkillIcon").value.trim()
+        });
+      } else if (activeModalType === "add_cert") {
+        currentData.certifications.push({
+          id: "c_" + Date.now(),
+          title: document.getElementById("fCertTitle").value.trim(),
+          description: document.getElementById("fCertDesc").value.trim(),
+          image: document.getElementById("fCertImg").value.trim()
+        });
+      } else if (activeModalType === "add_key_project") {
+        if (!currentData.keyProjectsShowcase) currentData.keyProjectsShowcase = [];
+        currentData.keyProjectsShowcase.push({
+          id: "kp_" + Date.now(),
+          title: document.getElementById("fKpTitle").value.trim()
+        });
+      } else if (activeModalType === "edit_key_project") {
+        const idx = (currentData.keyProjectsShowcase || []).findIndex(k => k.id === activeEditId);
+        if (idx !== -1) {
+          currentData.keyProjectsShowcase[idx] = {
+            id: activeEditId,
+            title: document.getElementById("fKpTitle").value.trim()
+          };
+        }
+      } else if (activeModalType === "add_core_skill") {
+        if (!currentData.coreSkillsShowcase) currentData.coreSkillsShowcase = [];
+        currentData.coreSkillsShowcase.push({
+          id: "cs_" + Date.now(),
+          name: document.getElementById("fCsName").value.trim()
+        });
+      } else if (activeModalType === "edit_core_skill") {
+        const idx = (currentData.coreSkillsShowcase || []).findIndex(s => s.id === activeEditId);
+        if (idx !== -1) {
+          currentData.coreSkillsShowcase[idx] = {
+            id: activeEditId,
+            name: document.getElementById("fCsName").value.trim()
+          };
+        }
+      } else if (activeModalType === "add_techstack") {
+        if (!currentData.techStack) currentData.techStack = [];
+        currentData.techStack.push({
+          id: "ts_" + Date.now(),
+          name: document.getElementById("fTsName").value.trim(),
+          category: document.getElementById("fTsCat").value,
+          proficiency: parseInt(document.getElementById("fTsProf").value) || 80
+        });
+      } else if (activeModalType === "edit_techstack") {
+        const tsIdx = (currentData.techStack || []).findIndex(t => t.id === activeEditId);
+        if (tsIdx !== -1) {
+          currentData.techStack[tsIdx] = {
+            id: activeEditId,
+            name: document.getElementById("fTsName").value.trim(),
+            category: document.getElementById("fTsCat").value,
+            proficiency: parseInt(document.getElementById("fTsProf").value) || 80
+          };
+        }
+      } else if (activeModalType === "add_about_tag") {
+        if (!currentData.aboutTags) currentData.aboutTags = [];
+        currentData.aboutTags.push({
+          id: "at_" + Date.now(),
+          name: document.getElementById("fAtName").value.trim()
+        });
+      } else if (activeModalType === "edit_about_tag") {
+        const idx = (currentData.aboutTags || []).findIndex(t => t.id === activeEditId);
+        if (idx !== -1) {
+          currentData.aboutTags[idx] = {
+            id: activeEditId,
+            name: document.getElementById("fAtName").value.trim()
+          };
+        }
+      } else if (activeModalType === "add_internship") {
+        currentData.internships.push({
+          id: "i_" + Date.now(),
+          role: document.getElementById("fIntRole").value.trim(),
+          company: document.getElementById("fIntComp").value.trim(),
+          duration: document.getElementById("fIntDur").value.trim(),
+          points: document.getElementById("fIntPts").value.split(",").map(p => p.trim())
+        });
+      } else if (activeModalType === "edit_internship") {
+        const idx = (currentData.internships || []).findIndex(i => i.id === activeEditId);
+        if (idx !== -1) {
+          currentData.internships[idx] = {
+            id: activeEditId,
+            role: document.getElementById("fIntRole").value.trim(),
+            company: document.getElementById("fIntComp").value.trim(),
+            duration: document.getElementById("fIntDur").value.trim(),
+            points: document.getElementById("fIntPts").value.split(",").map(p => p.trim())
+          };
+        }
+      }
+
+      savePortfolioData(currentData);
+      closeCrudModal();
+      loadAdminData();
+      showToast("Item saved successfully!", "success");
+    }
+
+    // Global Window Bindings
+    window.switchTab = switchTab;
+    window.saveProfileChanges = saveProfileChanges;
+    window.saveResumeTabChanges = saveResumeTabChanges;
+    window.saveSocialMediaLinks = saveSocialMediaLinks;
+    window.saveAboutTitles = saveAboutTitles;
+    window.saveAboutPhoto = saveAboutPhoto;
+    window.saveAboutBio1 = saveAboutBio1;
+    window.saveAboutBio2 = saveAboutBio2;
+    window.saveAboutBio3 = saveAboutBio3;
+    window.saveProfSummaryChanges = saveProfSummaryChanges;
+    window.deleteItem = deleteItem;
+    window.moveItemUp = moveItemUp;
+    window.moveItemDown = moveItemDown;
+    window.openCrudModal = openCrudModal;
+    window.closeCrudModal = closeCrudModal;
+    window.openAddProjectModal = openAddProjectModal;
+    window.openEditProject = openEditProject;
+    window.openAddGalleryModal = openAddGalleryModal;
+    window.openEditGalleryModal = openEditGalleryModal;
+    window.openAddSkillModal = openAddSkillModal;
+    window.openAddCertModal = openAddCertModal;
+    window.openAddEduModal = openAddEduModal;
+    window.openEditEdu = openEditEdu;
+    window.openAddKeyProjectModal = openAddKeyProjectModal;
+    window.openEditKeyProject = openEditKeyProject;
+    window.openAddCoreSkillModal = openAddCoreSkillModal;
+    window.openEditCoreSkill = openEditCoreSkill;
+    window.openAddAboutTagModal = openAddAboutTagModal;
+    window.openEditAboutTag = openEditAboutTag;
+    window.openAddTechStackModal = openAddTechStackModal;
+    window.openEditTechStack = openEditTechStack;
+    window.openAddInternshipModal = openAddInternshipModal;
+    window.openEditInternship = openEditInternship;
+    window.handleCrudSubmit = handleCrudSubmit;
+    window.previewUploadPdf = previewUploadPdf;
+    window.previewUploadImage = previewUploadImage;
+  </script>
+</body>
+</html>

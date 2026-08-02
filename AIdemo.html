@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Interactive Studio | Onkar Talekar</title>
+
+  <!-- Google Fonts & Font Awesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Background Canvas -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- Navigation Bar -->
+  <nav>
+    <div style="display: flex; align-items: center; gap: 0.5rem;">
+      <a href="index.html#home" class="logo-box">
+        <div class="nav-logo">
+          <img src="onkar.png" alt="Onkar Talekar Logo">
+        </div>
+        <span class="logo-text">Onkar Talekar</span>
+      </a>
+      <a href="admin.html" class="admin-nav-badge" title="Admin Portal">
+        <i class="fa-solid fa-lock"></i>
+      </a>
+    </div>
+
+    <ul class="nav-links">
+      <li><a href="home.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="suu.html">Skills</a></li>
+      <li><a href="techstack.html">Tech Stack</a></li>
+      <li><a href="project.html">Projects</a></li>
+      <li><a href="AIdemo.html" class="active">AI Demo</a></li>
+      <li><a href="Certifications.html">Certifications</a></li>
+      <li><a href="resume.html">Resume</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+
+    <button class="mobile-toggle" aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <!-- AI Interactive Studio -->
+  <section id="ai-demo" style="padding-top: 8rem;">
+    <h2 class="section-title">AI Interactive Studio</h2>
+    <p class="section-subtitle">Real-time simulated AI prompt evaluation and neural model response engine</p>
+
+    <div class="ai-demo-container">
+      <div class="ai-terminal-header">
+        <div class="dot dot-red"></div>
+        <div class="dot dot-yellow"></div>
+        <div class="dot dot-green"></div>
+        <span class="terminal-title">ai-neural-engine.v2.js</span>
+      </div>
+
+      <div class="prompt-suggestions" style="display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1.2rem;">
+        <button class="prompt-btn" onclick="setPrompt('Who is Onkar Talekar?')">🙋‍♂️ Who is Onkar?</button>
+        <button class="prompt-btn" onclick="setPrompt('What are Onkar\'s skills and tech stack?')">💻 Tech Skills & Stack</button>
+        <button class="prompt-btn" onclick="setPrompt('Tell me about Onkar\'s education and internships')">🎓 Education & Internships</button>
+        <button class="prompt-btn" onclick="setPrompt('Show Onkar\'s projects and certifications')">📁 Projects & Certifications</button>
+        <button class="prompt-btn" onclick="setPrompt('How can I contact Onkar Talekar?')">✉️ Contact Info</button>
+      </div>
+
+      <textarea id="aiTextInput" class="ai-input-box" placeholder="Ask a question or type an AI prompt..."></textarea>
+      
+      <button onclick="runTextAI()" class="btn-primary" style="width: 100%; justify-content: center;">
+        <span>Synthesize AI Response</span>
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+      </button>
+
+      <div id="aiThinking" class="ai-thinking">
+        <div class="spinner"></div>
+        <p style="color: var(--accent-cyan); font-weight: 600;">Neural Engine Synthesizing...</p>
+      </div>
+
+      <div id="aiResult" class="ai-output-box"></div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2026 Onkar Talekar. All rights reserved. | Built with Passion & AI Engineering</p>
+  </footer>
+
+  <!-- JS -->
+  <script src="data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

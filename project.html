@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projects | Onkar Talekar</title>
+
+  <!-- Google Fonts & Font Awesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Background Particle Canvas -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- Navigation Bar -->
+  <nav>
+    <div style="display: flex; align-items: center; gap: 0.5rem;">
+      <a href="index.html#home" class="logo-box">
+        <div class="nav-logo">
+          <img src="onkar.png" alt="Onkar Talekar Logo">
+        </div>
+        <span class="logo-text">Onkar Talekar</span>
+      </a>
+      <a href="admin.html" class="admin-nav-badge" title="Admin Portal">
+        <i class="fa-solid fa-lock"></i>
+      </a>
+    </div>
+
+    <ul class="nav-links">
+      <li><a href="home.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="suu.html">Skills</a></li>
+      <li><a href="techstack.html">Tech Stack</a></li>
+      <li><a href="project.html" class="active">Projects</a></li>
+      <li><a href="Certifications.html">Certifications</a></li>
+      <li><a href="resume.html">Resume</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+
+    <button class="mobile-toggle" aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <!-- Projects Section -->
+  <section id="projects" style="padding-top: 8rem;">
+    <h2 class="section-title">Featured Projects</h2>
+    <p class="section-subtitle">Real-world AI applications, healthcare solutions, and full-stack software systems</p>
+
+    <div class="projects-grid">
+      <div class="project-card-luxury">
+        <div class="project-img-wrapper" onclick="openImage(this)">
+          <img src="medicare.png" alt="Drug Recommendation System">
+        </div>
+        <div class="project-details">
+          <h3>Drug Recommendation & Govt Assistant</h3>
+          <p>Machine Learning powered health application predicting diseases, recommending appropriate medications, and highlighting applicable government healthcare schemes.</p>
+          <div class="project-tags">
+            <span>Python</span>
+            <span>Machine Learning</span>
+            <span>Healthcare Tech</span>
+          </div>
+          <a href="https://onkartalekar23.github.io/Mediconnect/" target="_blank" class="project-link-btn">
+            View Project Live <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="project-card-luxury">
+        <div class="project-img-wrapper" onclick="openImage(this)">
+          <img src="webprofile.png" alt="Portfolio Website">
+        </div>
+        <div class="project-details">
+          <h3>Interactive AI Portfolio Website</h3>
+          <p>A luxury responsive portfolio built with modern dark glassmorphic aesthetics, floating particle canvas, dynamic typed effects, and lightbox popups.</p>
+          <div class="project-tags">
+            <span>HTML5</span>
+            <span>CSS Glassmorphism</span>
+            <span>JavaScript</span>
+          </div>
+          <a href="https://onkartalekar0.github.io/Profile-Website/" target="_blank" class="project-link-btn">
+            View Project Live <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="project-card-luxury">
+        <div class="project-img-wrapper" onclick="openImage(this)">
+          <img src="resumeweb.png" alt="Resume Creator Website">
+        </div>
+        <div class="project-details">
+          <h3>Resume Creator Web App</h3>
+          <p>An intuitive web application allowing users to input professional details and generate clean, downloadable resumes instantly.</p>
+          <div class="project-tags">
+            <span>JavaScript</span>
+            <span>HTML5 & CSS3</span>
+            <span>Web Tool</span>
+          </div>
+          <a href="https://onkartalekar23.github.io/Resume-Creater-Website/" target="_blank" class="project-link-btn">
+            View Project Live <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gallery Grid -->
+    <h3 style="text-align: center; font-size: 1.8rem; margin-bottom: 1.5rem; color: var(--accent-cyan);">Project Snapshot Gallery</h3>
+    <div class="gallery">
+      <div class="gallery-item" onclick="openImage(this)">
+        <img src="cake.jpeg" alt="Cake Shop Website">
+        <div class="gallery-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
+      </div>
+      <div class="gallery-item" onclick="openImage(this)">
+        <img src="gov.png" alt="Gov Schemes Assistant">
+        <div class="gallery-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
+      </div>
+      <div class="gallery-item" onclick="openImage(this)">
+        <img src="flower.jpeg" alt="Tours & Travels Project">
+        <div class="gallery-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
+      </div>
+      <div class="gallery-item" onclick="openImage(this)">
+        <img src="drug.png" alt="Medicine Recommendation Interface">
+        <div class="gallery-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Image Lightbox Modal -->
+  <div id="fullscreen" onclick="closeImage()">
+    <span class="close-btn" onclick="closeImage()">&times;</span>
+    <img id="full-img" alt="Enlarged View">
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2026 Onkar Talekar. All rights reserved. | Built with Passion & AI Engineering</p>
+  </footer>
+
+  <!-- JS -->
+  <script src="data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
