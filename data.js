@@ -365,11 +365,7 @@ let isCloudSyncing = false;
 let isCloudPushing = false;
 
 function getActiveCloudUrl() {
-  try {
-    return localStorage.getItem("onkar_cloud_blob_url") || CLOUD_SYNC_URL;
-  } catch(e) {
-    return CLOUD_SYNC_URL;
-  }
+  return CLOUD_SYNC_URL;
 }
 
 // Background Cloud Sync Fetcher with Timestamp Protection
@@ -393,13 +389,22 @@ async function fetchCloudData() {
         }
         if (cloudPayload.portfolioData) {
           const cloudData = ensureDataDefaults(cloudPayload.portfolioData);
-          const localData = getPortfolioData();
           
-          // RACE CONDITION PROTECTION: Only overwrite if cloud timestamp is NEWER or EQUAL
-          const cloudTime = new Date(cloudPayload.lastUpdated || cloudData._lastUpdated || 0).getTime();
-          const localTime = new Date(localData._lastUpdated || 0).getTime();
+          const cloudTimeStr = cloudPayload.lastUpdated || (cloudPayload.portfolioData && cloudPayload.portfolioData._lastUpdated);
+          const cloudTime = cloudTimeStr ? new Date(cloudTimeStr).getTime() : 0;
 
-          if (cloudTime >= localTime) {
+          let localTimeStr = null;
+          try {
+            const storedRaw = localStorage.getItem("onkar_portfolio_data");
+            if (storedRaw) {
+              const parsedRaw = JSON.parse(storedRaw);
+              localTimeStr = parsedRaw ? parsedRaw._lastUpdated : null;
+            }
+          } catch(e) {}
+          const localTime = localTimeStr ? new Date(localTimeStr).getTime() : 0;
+
+          // ACCEPT CLOUD DATA if cloud timestamp is valid and newer/equal OR if local has no timestamp
+          if (!localTimeStr || isNaN(localTime) || (cloudTime > 0 && cloudTime >= localTime)) {
             try {
               localStorage.setItem("onkar_portfolio_data", JSON.stringify(cloudData));
             } catch(e) {}
@@ -445,24 +450,6 @@ async function pushCloudData() {
       body: JSON.stringify(payload)
     });
 
-    // If HTTP Status is 404 (expired or deleted blob), auto-create brand new blob
-    if (res && res.status === 404) {
-      const createRes = await fetch("https://jsonblob.com/api/jsonBlob", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify(payload)
-      });
-      if (createRes && createRes.ok) {
-        const locHeader = createRes.headers.get("location");
-        if (locHeader) {
-          const freshUrl = locHeader.startsWith("http") ? locHeader : "https://jsonblob.com" + locHeader;
-          try {
-            localStorage.setItem("onkar_cloud_blob_url", freshUrl);
-          } catch(e) {}
-        }
-      }
-    }
-
     return res && res.ok;
   } catch (e) {
     console.warn("Cloud sync write notice:", e);
@@ -470,7 +457,7 @@ async function pushCloudData() {
   } finally {
     setTimeout(() => {
       isCloudPushing = false;
-    }, 2000);
+    }, 1500);
   }
 }
 
