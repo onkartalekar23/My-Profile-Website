@@ -1766,7 +1766,7 @@
       openCrudModal("Change Admin Password");
     }
 
-    function handleCrudSubmit(e) {
+    async function handleCrudSubmit(e) {
       e.preventDefault();
       
       if (activeModalType === "change_password") {
@@ -1949,45 +1949,85 @@
       showToast("Item saved and synced across all devices!", "success");
     }
 
+    function openAddTechStackModal() {
+      activeModalType = "add_techstack";
+      document.getElementById("crudFields").innerHTML = `
+        <div class="form-group" style="margin-bottom: 1rem;"><label>Technology Name</label><input type="text" id="fTsName" placeholder="e.g. Python, SQL" required></div>
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label>Category</label>
+          <select id="fTsCat" style="width:100%; padding:0.6rem; border-radius:10px; background:var(--bg-card); color:var(--text-main); border:1px solid var(--glass-border);">
+            <option value="Programming Languages">Programming Languages</option>
+            <option value="Data & Visualization">Data & Visualization</option>
+            <option value="Tools & Ecosystem">Tools & Ecosystem</option>
+            <option value="Frameworks & Web">Frameworks & Web</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Proficiency Percentage (0 - 100)</label><input type="number" id="fTsProf" min="1" max="100" value="80" required></div>
+      `;
+      openCrudModal("Add Tech Stack Item");
+    }
+
+    function openEditTechStack(id) {
+      activeModalType = "edit_techstack";
+      activeEditId = id;
+      const ts = (currentData.techStack || []).find(t => t.id === id);
+      if (!ts) return;
+
+      document.getElementById("crudFields").innerHTML = `
+        <div class="form-group" style="margin-bottom: 1rem;"><label>Technology Name</label><input type="text" id="fTsName" value="${ts.name}" required></div>
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label>Category</label>
+          <select id="fTsCat" style="width:100%; padding:0.6rem; border-radius:10px; background:var(--bg-card); color:var(--text-main); border:1px solid var(--glass-border);">
+            <option value="Programming Languages" ${ts.category === 'Programming Languages' ? 'selected' : ''}>Programming Languages</option>
+            <option value="Data & Visualization" ${ts.category === 'Data & Visualization' ? 'selected' : ''}>Data & Visualization</option>
+            <option value="Tools & Ecosystem" ${ts.category === 'Tools & Ecosystem' ? 'selected' : ''}>Tools & Ecosystem</option>
+            <option value="Frameworks & Web" ${ts.category === 'Frameworks & Web' ? 'selected' : ''}>Frameworks & Web</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Proficiency Percentage (0 - 100)</label><input type="number" id="fTsProf" min="1" max="100" value="${ts.proficiency || 80}" required></div>
+      `;
+      openCrudModal("Edit Tech Stack Item");
+    }
+
     // Global Window Bindings
-    window.switchTab = switchTab;
-    window.handleLoginSubmit = handleLoginSubmit;
-    window.handleManualCloudSync = handleManualCloudSync;
-    window.saveProfileChanges = saveProfileChanges;
-    window.saveResumeTabChanges = saveResumeTabChanges;
-    window.saveSocialMediaLinks = saveSocialMediaLinks;
-    window.saveAboutTitles = saveAboutTitles;
-    window.saveAboutPhoto = saveAboutPhoto;
-    window.saveAboutBio1 = saveAboutBio1;
-    window.saveAboutBio2 = saveAboutBio2;
-    window.saveAboutBio3 = saveAboutBio3;
-    window.saveProfSummaryChanges = saveProfSummaryChanges;
-    window.deleteItem = deleteItem;
-    window.moveItemUp = moveItemUp;
-    window.moveItemDown = moveItemDown;
-    window.openCrudModal = openCrudModal;
-    window.closeCrudModal = closeCrudModal;
-    window.openAddProjectModal = openAddProjectModal;
-    window.openEditProject = openEditProject;
-    window.openAddGalleryModal = openAddGalleryModal;
-    window.openEditGalleryModal = openEditGalleryModal;
-    window.openAddSkillModal = openAddSkillModal;
-    window.openAddCertModal = openAddCertModal;
-    window.openAddEduModal = openAddEduModal;
-    window.openEditEdu = openEditEdu;
-    window.openAddKeyProjectModal = openAddKeyProjectModal;
-    window.openEditKeyProject = openEditKeyProject;
-    window.openAddCoreSkillModal = openAddCoreSkillModal;
-    window.openEditCoreSkill = openEditCoreSkill;
-    window.openAddAboutTagModal = openAddAboutTagModal;
-    window.openEditAboutTag = openEditAboutTag;
-    window.openAddTechStackModal = openAddTechStackModal;
-    window.openEditTechStack = openEditTechStack;
-    window.openAddInternshipModal = openAddInternshipModal;
-    window.openEditInternship = openEditInternship;
-    window.handleCrudSubmit = handleCrudSubmit;
-    window.previewUploadPdf = previewUploadPdf;
-    window.previewUploadImage = previewUploadImage;
+    if (typeof switchTab !== "undefined") window.switchTab = switchTab;
+    if (typeof handleLoginSubmit !== "undefined") window.handleLoginSubmit = handleLoginSubmit;
+    if (typeof handleManualCloudSync !== "undefined") window.handleManualCloudSync = handleManualCloudSync;
+    if (typeof saveProfileChanges !== "undefined") window.saveProfileChanges = saveProfileChanges;
+    if (typeof saveResumeTabChanges !== "undefined") window.saveResumeTabChanges = saveResumeTabChanges;
+    if (typeof saveSocialMediaLinks !== "undefined") window.saveSocialMediaLinks = saveSocialMediaLinks;
+    if (typeof saveAboutTitles !== "undefined") window.saveAboutTitles = saveAboutTitles;
+    if (typeof saveAboutPhoto !== "undefined") window.saveAboutPhoto = saveAboutPhoto;
+    if (typeof saveAboutBio1 !== "undefined") window.saveAboutBio1 = saveAboutBio1;
+    if (typeof saveAboutBio2 !== "undefined") window.saveAboutBio2 = saveAboutBio2;
+    if (typeof saveAboutBio3 !== "undefined") window.saveAboutBio3 = saveAboutBio3;
+    if (typeof saveProfSummaryChanges !== "undefined") window.saveProfSummaryChanges = saveProfSummaryChanges;
+    if (typeof deleteItem !== "undefined") window.deleteItem = deleteItem;
+    if (typeof moveItemUp !== "undefined") window.moveItemUp = moveItemUp;
+    if (typeof moveItemDown !== "undefined") window.moveItemDown = moveItemDown;
+    if (typeof openCrudModal !== "undefined") window.openCrudModal = openCrudModal;
+    if (typeof closeCrudModal !== "undefined") window.closeCrudModal = closeCrudModal;
+    if (typeof openAddProjectModal !== "undefined") window.openAddProjectModal = openAddProjectModal;
+    if (typeof openEditProject !== "undefined") window.openEditProject = openEditProject;
+    if (typeof openAddGalleryModal !== "undefined") window.openAddGalleryModal = openAddGalleryModal;
+    if (typeof openEditGalleryModal !== "undefined") window.openEditGalleryModal = openEditGalleryModal;
+    if (typeof openAddSkillModal !== "undefined") window.openAddSkillModal = openAddSkillModal;
+    if (typeof openAddCertModal !== "undefined") window.openAddCertModal = openAddCertModal;
+    if (typeof openAddEduModal !== "undefined") window.openAddEduModal = openAddEduModal;
+    if (typeof openEditEdu !== "undefined") window.openEditEdu = openEditEdu;
+    if (typeof openAddKeyProjectModal !== "undefined") window.openAddKeyProjectModal = openAddKeyProjectModal;
+    if (typeof openEditKeyProject !== "undefined") window.openEditKeyProject = openEditKeyProject;
+    if (typeof openAddCoreSkillModal !== "undefined") window.openAddCoreSkillModal = openAddCoreSkillModal;
+    if (typeof openEditCoreSkill !== "undefined") window.openEditCoreSkill = openEditCoreSkill;
+    if (typeof openAddAboutTagModal !== "undefined") window.openAddAboutTagModal = openAddAboutTagModal;
+    if (typeof openEditAboutTag !== "undefined") window.openEditAboutTag = openEditAboutTag;
+    if (typeof openAddTechStackModal !== "undefined") window.openAddTechStackModal = openAddTechStackModal;
+    if (typeof openEditTechStack !== "undefined") window.openEditTechStack = openEditTechStack;
+    if (typeof openAddInternshipModal !== "undefined") window.openAddInternshipModal = openAddInternshipModal;
+    if (typeof openEditInternship !== "undefined") window.openEditInternship = openEditInternship;
+    if (typeof handleCrudSubmit !== "undefined") window.handleCrudSubmit = handleCrudSubmit;
+    if (typeof previewUploadPdf !== "undefined") window.previewUploadPdf = previewUploadPdf;
+    if (typeof previewUploadImage !== "undefined") window.previewUploadImage = previewUploadImage;
   </script>
 </body>
 </html>
