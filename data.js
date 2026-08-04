@@ -463,7 +463,7 @@ async function pushCloudData() {
 // Trigger initial cloud sync immediately on load & add tab focus listeners
 if (typeof window !== "undefined") {
   fetchCloudData();
-  setInterval(fetchCloudData, 8000);
+  setInterval(fetchCloudData, 5000);
 
   window.addEventListener("focus", fetchCloudData);
   document.addEventListener("visibilitychange", () => {
