@@ -209,15 +209,15 @@
       <h2 style="font-size: 1.8rem; margin-bottom: 0.4rem;">Admin Portal</h2>
       <p style="font-size: 0.9rem; margin-bottom: 1.8rem; color: var(--text-muted);">Enter password to manage portfolio details</p>
 
-      <form id="loginForm" onsubmit="return handleLoginSubmit(event);">
+      <form id="loginForm" onsubmit="handleLoginSubmit(event); return false;">
         <div class="form-group" style="margin-bottom: 1.2rem;">
           <input type="password" id="adminPass" placeholder="Enter Password" required autocomplete="off">
         </div>
-        <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">
+        <button type="button" onclick="handleLoginSubmit(event)" class="btn-primary" style="width: 100%; justify-content: center;">
           <span>Unlock Admin Panel</span>
           <i class="fa-solid fa-lock-open"></i>
         </button>
-        <a href="#" onclick="openForgotPasswordModal(); return false;" style="color: var(--accent-cyan); font-size: 0.85rem; text-decoration: none; display: block; margin-top: 1.2rem; text-align: center;">
+        <a href="javascript:void(0)" onclick="openForgotPasswordModal(event); return false;" style="color: var(--accent-cyan); font-size: 0.85rem; text-decoration: none; display: block; margin-top: 1.2rem; text-align: center;">
           <i class="fa-solid fa-key"></i> Forgot Password? Reset via Email OTP
         </a>
       </form>
@@ -839,16 +839,27 @@
       emailjs.init(window.EMAILJS_PUBLIC_KEY);
     }
 
-    function openForgotPasswordModal() {
-      document.getElementById("otpStep1").style.display = "block";
-      document.getElementById("otpStep2").style.display = "none";
-      document.getElementById("otpStep3").style.display = "none";
-      document.getElementById("forgotPasswordModal").style.display = "flex";
+    function openForgotPasswordModal(e) {
+      if (e) { try { e.preventDefault(); e.stopPropagation(); } catch(err) {} }
+      const s1 = document.getElementById("otpStep1");
+      const s2 = document.getElementById("otpStep2");
+      const s3 = document.getElementById("otpStep3");
+      const modal = document.getElementById("forgotPasswordModal");
+      if (s1) s1.style.display = "block";
+      if (s2) s2.style.display = "none";
+      if (s3) s3.style.display = "none";
+      if (modal) {
+        modal.style.cssText = "display: flex !important; z-index: 20005 !important;";
+      }
+      return false;
     }
+    window.openForgotPasswordModal = openForgotPasswordModal;
 
     function closeForgotPasswordModal() {
-      document.getElementById("forgotPasswordModal").style.display = "none";
+      const modal = document.getElementById("forgotPasswordModal");
+      if (modal) modal.style.cssText = "display: none !important;";
     }
+    window.closeForgotPasswordModal = closeForgotPasswordModal;
 
     function sendOTPToEmail(e) {
       if (e) e.preventDefault();
@@ -998,28 +1009,41 @@
     // PASSWORD LOGIN CHECK
     function handleLoginSubmit(e) {
       if (e) {
-        e.preventDefault();
-        e.stopPropagation();
+        try {
+          e.preventDefault();
+          e.stopPropagation();
+        } catch(err) {}
       }
-      if (sessionStorage.getItem("admin_logged_in") === "true") {
+      let isLoggedIn = false;
+      try {
+        isLoggedIn = sessionStorage.getItem("admin_logged_in") === "true";
+      } catch(err) {}
+
+      if (isLoggedIn) {
         showDashboard();
         return false;
       }
+
       const passInput = document.getElementById("adminPass");
       const pass = passInput ? (passInput.value || "").trim() : "";
       const lowerPass = pass.toLowerCase();
-      const storedPass = (getAdminPassword() || "").toLowerCase();
+      let storedPass = "onkar23@";
+      try {
+        storedPass = (getAdminPassword() || "Onkar23@").toLowerCase();
+      } catch(err) {}
 
       // Flexible, instant login check for Onkar23@ or onkar23
       if (
         lowerPass === "onkar23@" ||
         lowerPass === "onkar23" ||
         lowerPass === storedPass ||
-        pass === getAdminPassword() ||
-        pass === "Onkar23@"
+        pass === "Onkar23@" ||
+        (typeof getAdminPassword === "function" && pass === getAdminPassword())
       ) {
-        sessionStorage.setItem("admin_logged_in", "true");
-        localStorage.setItem("onkar_admin_password", "Onkar23@");
+        try {
+          sessionStorage.setItem("admin_logged_in", "true");
+          localStorage.setItem("onkar_admin_password", "Onkar23@");
+        } catch(err) {}
         if (passInput) passInput.value = "";
         showDashboard();
         showToast("Welcome to Admin Dashboard!", "success");
@@ -1031,28 +1055,35 @@
       }
     }
 
-    const loginFormEl = document.getElementById("loginForm");
-    if (loginFormEl) {
-      loginFormEl.addEventListener("submit", handleLoginSubmit);
-    }
-
-    if (typeof window !== "undefined") {
-      document.addEventListener("DOMContentLoaded", () => {
-        if (sessionStorage.getItem("admin_logged_in") === "true") {
-          showDashboard();
-        }
-      });
-      if (sessionStorage.getItem("admin_logged_in") === "true") {
-        showDashboard();
-      }
-    }
+    window.handleLoginSubmit = handleLoginSubmit;
 
     function showDashboard() {
       const loginOverlay = document.getElementById("loginOverlay");
       const adminDashboard = document.getElementById("adminDashboard");
-      if (loginOverlay) loginOverlay.style.display = "none";
-      if (adminDashboard) adminDashboard.style.display = "block";
-      loadAdminData();
+      if (loginOverlay) loginOverlay.style.cssText = "display: none !important;";
+      if (adminDashboard) adminDashboard.style.cssText = "display: block !important;";
+      try {
+        loadAdminData();
+      } catch(err) {
+        console.error("loadAdminData error:", err);
+      }
+    }
+
+    window.showDashboard = showDashboard;
+
+    if (typeof window !== "undefined") {
+      document.addEventListener("DOMContentLoaded", () => {
+        try {
+          if (sessionStorage.getItem("admin_logged_in") === "true") {
+            showDashboard();
+          }
+        } catch(err) {}
+      });
+      try {
+        if (sessionStorage.getItem("admin_logged_in") === "true") {
+          showDashboard();
+        }
+      } catch(err) {}
     }
 
     function handleLogout() {

@@ -333,11 +333,17 @@ function resetPortfolioData() {
 }
 
 function getAdminPassword() {
-  return localStorage.getItem("onkar_admin_password") || "Onkar23@";
+  try {
+    return localStorage.getItem("onkar_admin_password") || "Onkar23@";
+  } catch (e) {
+    return "Onkar23@";
+  }
 }
 
 function setAdminPassword(newPassword) {
-  localStorage.setItem("onkar_admin_password", newPassword);
+  try {
+    localStorage.setItem("onkar_admin_password", newPassword);
+  } catch (e) {}
   return pushCloudData();
 }
 
@@ -357,16 +363,23 @@ async function fetchCloudData() {
     if (response && response.ok) {
       const cloudPayload = await response.json();
       if (cloudPayload && typeof cloudPayload === "object") {
-        if (cloudPayload.adminPassword) {
-          localStorage.setItem("onkar_admin_password", cloudPayload.adminPassword);
+        if (cloudPayload.adminPassword && cloudPayload.adminPassword.trim().length > 0) {
+          try {
+            localStorage.setItem("onkar_admin_password", cloudPayload.adminPassword);
+          } catch(e) {}
         }
         if (cloudPayload.portfolioData) {
           const normalized = ensureDataDefaults(cloudPayload.portfolioData);
-          const currentLocal = localStorage.getItem("onkar_portfolio_data");
+          let currentLocal = null;
+          try {
+            currentLocal = localStorage.getItem("onkar_portfolio_data");
+          } catch(e) {}
           const newString = JSON.stringify(normalized);
 
           if (currentLocal !== newString) {
-            localStorage.setItem("onkar_portfolio_data", newString);
+            try {
+              localStorage.setItem("onkar_portfolio_data", newString);
+            } catch(e) {}
             if (typeof renderDynamicPortfolioData === "function") {
               renderDynamicPortfolioData();
             }
