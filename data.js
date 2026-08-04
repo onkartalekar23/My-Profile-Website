@@ -350,15 +350,24 @@ function setAdminPassword(newPassword) {
 /* ==========================================================================
    CLOUD STORAGE REALTIME SYNC (CROSS-DEVICE SYNC ENGINE)
    ========================================================================== */
-const CLOUD_SYNC_URL = "https://jsonblob.com/api/jsonBlob/019fc1e3-9a0d-7cc0-8be8-e9a60c43d819";
+const CLOUD_SYNC_URL = "https://jsonblob.com/api/jsonBlob/019fcc16-5088-7e13-9bca-542d67907cc7";
 let isCloudSyncing = false;
+
+function getActiveCloudUrl() {
+  try {
+    return localStorage.getItem("onkar_cloud_blob_url") || CLOUD_SYNC_URL;
+  } catch(e) {
+    return CLOUD_SYNC_URL;
+  }
+}
 
 // Background Cloud Sync Fetcher
 async function fetchCloudData() {
   if (isCloudSyncing) return;
   isCloudSyncing = true;
   try {
-    const cacheBusterUrl = CLOUD_SYNC_URL + "?t=" + Date.now();
+    const activeUrl = getActiveCloudUrl();
+    const cacheBusterUrl = activeUrl + (activeUrl.includes("?") ? "&" : "?") + "t=" + Date.now();
     const response = await fetch(cacheBusterUrl, { cache: "no-store" });
     if (response && response.ok) {
       const cloudPayload = await response.json();
@@ -397,7 +406,7 @@ async function fetchCloudData() {
   }
 }
 
-// Push Local State to Cloud
+// Push Local State to Cloud (With Automatic Self-Healing Creation)
 async function pushCloudData() {
   try {
     const portfolioData = getPortfolioData();
@@ -407,11 +416,33 @@ async function pushCloudData() {
       portfolioData: portfolioData,
       lastUpdated: new Date().toISOString()
     };
-    const res = await fetch(CLOUD_SYNC_URL, {
+    
+    let activeUrl = getActiveCloudUrl();
+    let res = await fetch(activeUrl, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
+
+    // If HTTP Status is 404 (expired or deleted blob), auto-create brand new blob
+    if (res && res.status === 404) {
+      const createRes = await fetch("https://jsonblob.com/api/jsonBlob", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      if (createRes && createRes.ok) {
+        const locHeader = createRes.headers.get("location");
+        if (locHeader) {
+          const freshUrl = locHeader.startsWith("http") ? locHeader : "https://jsonblob.com" + locHeader;
+          try {
+            localStorage.setItem("onkar_cloud_blob_url", freshUrl);
+          } catch(e) {}
+          return true;
+        }
+      }
+    }
+
     return res && res.ok;
   } catch (e) {
     console.warn("Cloud sync write notice:", e);
@@ -422,7 +453,7 @@ async function pushCloudData() {
 // Trigger initial cloud sync immediately on load & add tab focus listeners
 if (typeof window !== "undefined") {
   fetchCloudData();
-  setInterval(fetchCloudData, 15000);
+  setInterval(fetchCloudData, 8000);
 
   window.addEventListener("focus", fetchCloudData);
   document.addEventListener("visibilitychange", () => {
