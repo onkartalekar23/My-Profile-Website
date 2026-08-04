@@ -272,26 +272,33 @@ function ensureDataDefaults(parsed) {
   if (!parsed.profile.bioParagraph2) parsed.profile.bioParagraph2 = defaultPortfolioData.profile.bioParagraph2;
   if (!parsed.profile.bioParagraph3) parsed.profile.bioParagraph3 = defaultPortfolioData.profile.bioParagraph3;
 
+  if (!parsed.projects || parsed.projects.length === 0) {
+    parsed.projects = JSON.parse(JSON.stringify(defaultPortfolioData.projects));
+  }
+  if (!parsed.skills || parsed.skills.length === 0) {
+    parsed.skills = JSON.parse(JSON.stringify(defaultPortfolioData.skills));
+  }
+  if (!parsed.certifications || parsed.certifications.length === 0) {
+    parsed.certifications = JSON.parse(JSON.stringify(defaultPortfolioData.certifications));
+  }
+  if (!parsed.techStack || parsed.techStack.length === 0) {
+    parsed.techStack = JSON.parse(JSON.stringify(defaultPortfolioData.techStack));
+  }
   if (!parsed.aboutTags || parsed.aboutTags.length === 0) {
     parsed.aboutTags = JSON.parse(JSON.stringify(defaultPortfolioData.aboutTags));
   }
-
   if (!parsed.education || parsed.education.length === 0) {
     parsed.education = JSON.parse(JSON.stringify(defaultPortfolioData.education));
   }
-
   if (!parsed.internships || parsed.internships.length === 0) {
     parsed.internships = JSON.parse(JSON.stringify(defaultPortfolioData.internships));
   }
-
   if (!parsed.keyProjectsShowcase || parsed.keyProjectsShowcase.length === 0) {
     parsed.keyProjectsShowcase = JSON.parse(JSON.stringify(defaultPortfolioData.keyProjectsShowcase));
   }
-
   if (!parsed.coreSkillsShowcase || parsed.coreSkillsShowcase.length === 0) {
     parsed.coreSkillsShowcase = JSON.parse(JSON.stringify(defaultPortfolioData.coreSkillsShowcase));
   }
-
   if (!parsed.projectGallery || parsed.projectGallery.length === 0) {
     parsed.projectGallery = JSON.parse(JSON.stringify(defaultPortfolioData.projectGallery));
   }
@@ -347,7 +354,7 @@ async function fetchCloudData() {
   try {
     const cacheBusterUrl = CLOUD_SYNC_URL + "?t=" + Date.now();
     const response = await fetch(cacheBusterUrl, { cache: "no-store" });
-    if (response.ok) {
+    if (response && response.ok) {
       const cloudPayload = await response.json();
       if (cloudPayload && typeof cloudPayload === "object") {
         if (cloudPayload.adminPassword) {
@@ -392,7 +399,7 @@ async function pushCloudData() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
-    return res.ok;
+    return res && res.ok;
   } catch (e) {
     console.warn("Cloud sync write notice:", e);
     return false;
@@ -402,7 +409,7 @@ async function pushCloudData() {
 // Trigger initial cloud sync immediately on load & add tab focus listeners
 if (typeof window !== "undefined") {
   fetchCloudData();
-  setInterval(fetchCloudData, 4000);
+  setInterval(fetchCloudData, 15000);
 
   window.addEventListener("focus", fetchCloudData);
   document.addEventListener("visibilitychange", () => {

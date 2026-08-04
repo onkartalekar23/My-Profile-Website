@@ -209,11 +209,11 @@
       <h2 style="font-size: 1.8rem; margin-bottom: 0.4rem;">Admin Portal</h2>
       <p style="font-size: 0.9rem; margin-bottom: 1.8rem; color: var(--text-muted);">Enter password to manage portfolio details</p>
 
-      <form id="loginForm" onsubmit="handleLoginSubmit(event); return false;">
+      <form id="loginForm" onsubmit="return handleLoginSubmit(event);">
         <div class="form-group" style="margin-bottom: 1.2rem;">
           <input type="password" id="adminPass" placeholder="Enter Password" required autocomplete="off">
         </div>
-        <button type="button" onclick="handleLoginSubmit(event)" class="btn-primary" style="width: 100%; justify-content: center;">
+        <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">
           <span>Unlock Admin Panel</span>
           <i class="fa-solid fa-lock-open"></i>
         </button>
@@ -1001,6 +1001,10 @@
         e.preventDefault();
         e.stopPropagation();
       }
+      if (sessionStorage.getItem("admin_logged_in") === "true") {
+        showDashboard();
+        return false;
+      }
       const passInput = document.getElementById("adminPass");
       const pass = passInput ? (passInput.value || "").trim() : "";
       const lowerPass = pass.toLowerCase();
@@ -1032,13 +1036,22 @@
       loginFormEl.addEventListener("submit", handleLoginSubmit);
     }
 
-    if (sessionStorage.getItem("admin_logged_in") === "true") {
-      showDashboard();
+    if (typeof window !== "undefined") {
+      document.addEventListener("DOMContentLoaded", () => {
+        if (sessionStorage.getItem("admin_logged_in") === "true") {
+          showDashboard();
+        }
+      });
+      if (sessionStorage.getItem("admin_logged_in") === "true") {
+        showDashboard();
+      }
     }
 
     function showDashboard() {
-      document.getElementById("loginOverlay").style.display = "none";
-      document.getElementById("adminDashboard").style.display = "block";
+      const loginOverlay = document.getElementById("loginOverlay");
+      const adminDashboard = document.getElementById("adminDashboard");
+      if (loginOverlay) loginOverlay.style.display = "none";
+      if (adminDashboard) adminDashboard.style.display = "block";
       loadAdminData();
     }
 
@@ -1123,20 +1136,24 @@
       document.querySelectorAll(".admin-tab-btn").forEach(btn => btn.classList.remove("active"));
       document.querySelectorAll(".tab-section").forEach(sec => sec.classList.remove("active"));
       
-      event.currentTarget.classList.add("active");
-      document.getElementById(`tab-${tabId}`).classList.add("active");
+      if (event && event.currentTarget) {
+        event.currentTarget.classList.add("active");
+      }
+      const targetTab = document.getElementById(`tab-${tabId}`);
+      if (targetTab) targetTab.classList.add("active");
     }
 
     function loadAdminData() {
       currentData = getPortfolioData();
+      if (!currentData || !currentData.profile) return;
       
       // Populate Profile Form
-      document.getElementById("profName").value = currentData.profile.name || "";
-      document.getElementById("profTagline").value = currentData.profile.tagline || "";
-      document.getElementById("profLoc").value = currentData.profile.location || "";
-      document.getElementById("profExp").value = currentData.profile.expertise || "";
-      document.getElementById("profEmail").value = currentData.profile.email || "";
-      document.getElementById("profBio1").value = currentData.profile.bioParagraph1 || "";
+      if (document.getElementById("profName")) document.getElementById("profName").value = currentData.profile.name || "";
+      if (document.getElementById("profTagline")) document.getElementById("profTagline").value = currentData.profile.tagline || "";
+      if (document.getElementById("profLoc")) document.getElementById("profLoc").value = currentData.profile.location || "";
+      if (document.getElementById("profExp")) document.getElementById("profExp").value = currentData.profile.expertise || "";
+      if (document.getElementById("profEmail")) document.getElementById("profEmail").value = currentData.profile.email || "";
+      if (document.getElementById("profBio1")) document.getElementById("profBio1").value = currentData.profile.bioParagraph1 || "";
       if (document.getElementById("profResumeTab")) document.getElementById("profResumeTab").value = currentData.profile.resumePdf || "Onkar Resume Latest (1)_compressed.pdf";
       if (document.getElementById("profSummaryInput")) document.getElementById("profSummaryInput").value = currentData.profile.professionalSummary || "";
 
@@ -1152,7 +1169,8 @@
       if (document.getElementById("aboutHeadlineInput")) document.getElementById("aboutHeadlineInput").value = currentData.profile.aboutHeadline || "";
       if (document.getElementById("aboutPhotoInput")) {
         document.getElementById("aboutPhotoInput").value = currentData.profile.aboutPhoto || "onkar.png";
-        document.getElementById("aboutPhotoPreview").src = currentData.profile.aboutPhoto || "onkar.png";
+        const preview = document.getElementById("aboutPhotoPreview");
+        if (preview) preview.src = currentData.profile.aboutPhoto || "onkar.png";
       }
       if (document.getElementById("aboutBio1Input")) document.getElementById("aboutBio1Input").value = currentData.profile.bioParagraph1 || "";
       if (document.getElementById("aboutBio2Input")) document.getElementById("aboutBio2Input").value = currentData.profile.bioParagraph2 || "";
@@ -1193,22 +1211,24 @@
 
       // Populate Projects with Reordering
       const projBody = document.getElementById("projectsTableBody");
-      projBody.innerHTML = currentData.projects.map((p, idx) => `
-        <tr>
-          <td>
-            <button class="action-icon-btn move" onclick="moveItemUp('projects', ${idx})" ${idx === 0 ? 'disabled style="opacity:0.3;"' : ''} title="Move Up"><i class="fa-solid fa-arrow-up"></i></button>
-            <button class="action-icon-btn move" onclick="moveItemDown('projects', ${idx})" ${idx === currentData.projects.length - 1 ? 'disabled style="opacity:0.3;"' : ''} title="Move Down"><i class="fa-solid fa-arrow-down"></i></button>
-          </td>
-          <td><img src="${p.image}" alt="${p.title}" style="width: 54px; height: 38px; object-fit: cover; border-radius: 8px; border: 1px solid var(--glass-border);"></td>
-          <td><strong>${p.title}</strong></td>
-          <td>${(p.tags || []).join(", ")}</td>
-          <td><a href="${p.demoLink}" target="_blank" style="color: var(--accent-cyan);">Link</a></td>
-          <td>
-            <button class="action-icon-btn edit" onclick="openEditProject('${p.id}')"><i class="fa-solid fa-pen"></i></button>
-            <button class="action-icon-btn delete" onclick="deleteItem('projects', '${p.id}')"><i class="fa-solid fa-trash"></i></button>
-          </td>
-        </tr>
-      `).join("");
+      if (projBody) {
+        projBody.innerHTML = (currentData.projects || []).map((p, idx) => `
+          <tr>
+            <td>
+              <button class="action-icon-btn move" onclick="moveItemUp('projects', ${idx})" ${idx === 0 ? 'disabled style="opacity:0.3;"' : ''} title="Move Up"><i class="fa-solid fa-arrow-up"></i></button>
+              <button class="action-icon-btn move" onclick="moveItemDown('projects', ${idx})" ${idx === (currentData.projects || []).length - 1 ? 'disabled style="opacity:0.3;"' : ''} title="Move Down"><i class="fa-solid fa-arrow-down"></i></button>
+            </td>
+            <td><img src="${p.image}" alt="${p.title}" style="width: 54px; height: 38px; object-fit: cover; border-radius: 8px; border: 1px solid var(--glass-border);"></td>
+            <td><strong>${p.title}</strong></td>
+            <td>${(p.tags || []).join(", ")}</td>
+            <td><a href="${p.demoLink}" target="_blank" style="color: var(--accent-cyan);">Link</a></td>
+            <td>
+              <button class="action-icon-btn edit" onclick="openEditProject('${p.id}')"><i class="fa-solid fa-pen"></i></button>
+              <button class="action-icon-btn delete" onclick="deleteItem('projects', '${p.id}')"><i class="fa-solid fa-trash"></i></button>
+            </td>
+          </tr>
+        `).join("");
+      }
 
       // Populate Project Gallery with Reordering
       const galleryBody = document.getElementById("galleryTableBody");
@@ -1232,42 +1252,46 @@
 
       // Populate Skills with Reordering
       const skillBody = document.getElementById("skillsTableBody");
-      skillBody.innerHTML = currentData.skills.map((s, idx) => `
-        <tr>
-          <td>
-            <button class="action-icon-btn move" onclick="moveItemUp('skills', ${idx})" ${idx === 0 ? 'disabled style="opacity:0.3;"' : ''} title="Move Up"><i class="fa-solid fa-arrow-up"></i></button>
-            <button class="action-icon-btn move" onclick="moveItemDown('skills', ${idx})" ${idx === currentData.skills.length - 1 ? 'disabled style="opacity:0.3;"' : ''} title="Move Down"><i class="fa-solid fa-arrow-down"></i></button>
-          </td>
-          <td><img src="${s.icon}" alt="${s.name}" style="width: 38px; height: 38px; object-fit: contain; background: rgba(255,255,255,0.05); padding: 4px; border-radius: 8px;"></td>
-          <td><strong>${s.name}</strong></td>
-          <td style="color: var(--text-muted); font-size: 0.82rem; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${s.icon}</td>
-          <td>
-            <button class="action-icon-btn delete" onclick="deleteItem('skills', '${s.id}')"><i class="fa-solid fa-trash"></i></button>
-          </td>
-        </tr>
-      `).join("");
+      if (skillBody) {
+        skillBody.innerHTML = (currentData.skills || []).map((s, idx) => `
+          <tr>
+            <td>
+              <button class="action-icon-btn move" onclick="moveItemUp('skills', ${idx})" ${idx === 0 ? 'disabled style="opacity:0.3;"' : ''} title="Move Up"><i class="fa-solid fa-arrow-up"></i></button>
+              <button class="action-icon-btn move" onclick="moveItemDown('skills', ${idx})" ${idx === (currentData.skills || []).length - 1 ? 'disabled style="opacity:0.3;"' : ''} title="Move Down"><i class="fa-solid fa-arrow-down"></i></button>
+            </td>
+            <td><img src="${s.icon}" alt="${s.name}" style="width: 38px; height: 38px; object-fit: contain; background: rgba(255,255,255,0.05); padding: 4px; border-radius: 8px;"></td>
+            <td><strong>${s.name}</strong></td>
+            <td style="color: var(--text-muted); font-size: 0.82rem; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${s.icon}</td>
+            <td>
+              <button class="action-icon-btn delete" onclick="deleteItem('skills', '${s.id}')"><i class="fa-solid fa-trash"></i></button>
+            </td>
+          </tr>
+        `).join("");
+      }
 
       // Populate Certs with Reordering
       const certBody = document.getElementById("certsTableBody");
-      certBody.innerHTML = currentData.certifications.map((c, idx) => `
-        <tr>
-          <td>
-            <button class="action-icon-btn move" onclick="moveItemUp('certifications', ${idx})" ${idx === 0 ? 'disabled style="opacity:0.3;"' : ''} title="Move Up"><i class="fa-solid fa-arrow-up"></i></button>
-            <button class="action-icon-btn move" onclick="moveItemDown('certifications', ${idx})" ${idx === currentData.certifications.length - 1 ? 'disabled style="opacity:0.3;"' : ''} title="Move Down"><i class="fa-solid fa-arrow-down"></i></button>
-          </td>
-          <td><img src="${c.image}" alt="${c.title}" style="width: 54px; height: 38px; object-fit: cover; border-radius: 8px; border: 1px solid var(--glass-border);"></td>
-          <td><strong>${c.title}</strong></td>
-          <td style="color: var(--text-muted); font-size: 0.82rem; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${c.image}</td>
-          <td>
-            <button class="action-icon-btn delete" onclick="deleteItem('certifications', '${c.id}')"><i class="fa-solid fa-trash"></i></button>
-          </td>
-        </tr>
-      `).join("");
+      if (certBody) {
+        certBody.innerHTML = (currentData.certifications || []).map((c, idx) => `
+          <tr>
+            <td>
+              <button class="action-icon-btn move" onclick="moveItemUp('certifications', ${idx})" ${idx === 0 ? 'disabled style="opacity:0.3;"' : ''} title="Move Up"><i class="fa-solid fa-arrow-up"></i></button>
+              <button class="action-icon-btn move" onclick="moveItemDown('certifications', ${idx})" ${idx === (currentData.certifications || []).length - 1 ? 'disabled style="opacity:0.3;"' : ''} title="Move Down"><i class="fa-solid fa-arrow-down"></i></button>
+            </td>
+            <td><img src="${c.image}" alt="${c.title}" style="width: 54px; height: 38px; object-fit: cover; border-radius: 8px; border: 1px solid var(--glass-border);"></td>
+            <td><strong>${c.title}</strong></td>
+            <td style="color: var(--text-muted); font-size: 0.82rem; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${c.image}</td>
+            <td>
+              <button class="action-icon-btn delete" onclick="deleteItem('certifications', '${c.id}')"><i class="fa-solid fa-trash"></i></button>
+            </td>
+          </tr>
+        `).join("");
+      }
 
       // Populate Internships
       const internBody = document.getElementById("internshipsTableBody");
       if (internBody) {
-        internBody.innerHTML = currentData.internships.map(i => `
+        internBody.innerHTML = (currentData.internships || []).map(i => `
           <tr>
             <td><strong>${i.role}</strong></td>
             <td>${i.company}</td>
