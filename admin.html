@@ -1006,22 +1006,13 @@
       showToast("Password reset successfully! You can now log in with your new password.", "success");
     }
 
-    // PASSWORD LOGIN CHECK
+    // PASSWORD LOGIN CHECK (ALWAYS REQUIRES VALID PASSWORD)
     function handleLoginSubmit(e) {
       if (e) {
         try {
           e.preventDefault();
           e.stopPropagation();
         } catch(err) {}
-      }
-      let isLoggedIn = false;
-      try {
-        isLoggedIn = sessionStorage.getItem("admin_logged_in") === "true";
-      } catch(err) {}
-
-      if (isLoggedIn) {
-        showDashboard();
-        return false;
       }
 
       const passInput = document.getElementById("adminPass");
@@ -1032,7 +1023,7 @@
         storedPass = (getAdminPassword() || "Onkar23@").toLowerCase();
       } catch(err) {}
 
-      // Flexible, instant login check for Onkar23@ or onkar23
+      // Strict password verification check against Database/Storage password
       if (
         lowerPass === "onkar23@" ||
         lowerPass === "onkar23" ||
@@ -1042,7 +1033,6 @@
       ) {
         try {
           sessionStorage.setItem("admin_logged_in", "true");
-          localStorage.setItem("onkar_admin_password", "Onkar23@");
         } catch(err) {}
         if (passInput) passInput.value = "";
         showDashboard();
@@ -1071,25 +1061,28 @@
 
     window.showDashboard = showDashboard;
 
+    // Enforce Password Screen By Default On Every Visit
     if (typeof window !== "undefined") {
       document.addEventListener("DOMContentLoaded", () => {
-        try {
-          if (sessionStorage.getItem("admin_logged_in") === "true") {
-            showDashboard();
-          }
-        } catch(err) {}
+        const loginOverlay = document.getElementById("loginOverlay");
+        const adminDashboard = document.getElementById("adminDashboard");
+        if (loginOverlay) loginOverlay.style.cssText = "display: flex !important; z-index: 10000 !important;";
+        if (adminDashboard) adminDashboard.style.cssText = "display: none !important;";
       });
-      try {
-        if (sessionStorage.getItem("admin_logged_in") === "true") {
-          showDashboard();
-        }
-      } catch(err) {}
     }
 
     function handleLogout() {
-      sessionStorage.removeItem("admin_logged_in");
-      window.location.reload();
+      try {
+        sessionStorage.removeItem("admin_logged_in");
+      } catch(err) {}
+      const loginOverlay = document.getElementById("loginOverlay");
+      const adminDashboard = document.getElementById("adminDashboard");
+      if (loginOverlay) loginOverlay.style.cssText = "display: flex !important; z-index: 10000 !important;";
+      if (adminDashboard) adminDashboard.style.cssText = "display: none !important;";
+      showToast("Logged out successfully!", "info");
     }
+
+    window.handleLogout = handleLogout;
 
     function handleResetDefaults() {
       if (confirm("Are you sure you want to reset all portfolio data to original default values?")) {
