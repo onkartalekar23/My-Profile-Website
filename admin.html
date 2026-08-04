@@ -1499,14 +1499,51 @@
       }
     }
 
-    function previewUploadImage(fileInput, previewImgId, textInputId) {
-      if (fileInput.files && fileInput.files[0]) {
+    // FILE READER HELPER WITH AUTOMATIC CANVAS COMPRESSION (20KB - 40KB LIGHTWEIGHT IMAGES)
+    function previewUploadImage(fileInput, previewImgId, textInputId, maxDim = 500, quality = 0.6) {
+      if (fileInput && fileInput.files && fileInput.files[0]) {
+        const file = fileInput.files[0];
         const reader = new FileReader();
         reader.onload = function(e) {
-          document.getElementById(previewImgId).src = e.target.result;
-          document.getElementById(textInputId).value = e.target.result;
+          const img = new Image();
+          img.onload = function() {
+            try {
+              const canvas = document.createElement("canvas");
+              let width = img.width || 500;
+              let height = img.height || 500;
+              
+              if (width > maxDim || height > maxDim) {
+                if (width > height) {
+                  height = Math.round((height * maxDim) / width);
+                  width = maxDim;
+                } else {
+                  width = Math.round((width * maxDim) / height);
+                  height = maxDim;
+                }
+              }
+              
+              canvas.width = width;
+              canvas.height = height;
+              const ctx = canvas.getContext("2d");
+              ctx.drawImage(img, 0, 0, width, height);
+              
+              // Compress to 20KB - 40KB optimized JPEG data URL
+              const compressedDataUrl = canvas.toDataURL("image/jpeg", quality);
+              
+              const p = document.getElementById(previewImgId);
+              if (p) p.src = compressedDataUrl;
+              const t = document.getElementById(textInputId);
+              if (t) t.value = compressedDataUrl;
+            } catch (err) {
+              const p = document.getElementById(previewImgId);
+              if (p) p.src = e.target.result;
+              const t = document.getElementById(textInputId);
+              if (t) t.value = e.target.result;
+            }
+          };
+          img.src = e.target.result;
         };
-        reader.readAsDataURL(fileInput.files[0]);
+        reader.readAsDataURL(file);
       }
     }
 
@@ -1603,13 +1640,13 @@
     function openAddSkillModal() {
       activeModalType = "add_skill";
       document.getElementById("crudFields").innerHTML = `
-        <div class="form-group" style="margin-bottom: 1rem;"><label>Skill Name (e.g. Python)</label><input type="text" id="fSkillName" required></div>
+        <div class="form-group" style="margin-bottom: 1rem;"><label>Skill Name (e.g. Python, Docker, PyTorch)</label><input type="text" id="fSkillName" placeholder="e.g. Cybersecurity" required></div>
         <div class="form-group" style="margin-bottom: 1rem;">
           <label>Skill PNG Icon (Upload PNG/JPG File or Enter Path)</label>
           <button type="button" onclick="document.getElementById('fSkillIconFile').click()" class="btn-secondary" style="width:100%; justify-content:center; margin-bottom:0.6rem; padding:0.5rem;">📁 Choose Skill PNG File</button>
           <input type="file" accept="image/*" onchange="previewUploadImage(this, 'sIconPreview', 'fSkillIcon')" style="display: none;" id="fSkillIconFile">
-          <input type="text" id="fSkillIcon" placeholder="e.g. python.png" oninput="document.getElementById('sIconPreview').src=this.value" required>
-          <img id="sIconPreview" src="" style="max-width: 60px; max-height: 60px; border-radius: 10px; margin-top: 8px; display: block; background: rgba(255,255,255,0.05); padding: 4px;">
+          <input type="text" id="fSkillIcon" placeholder="e.g. python.png or leave blank for default icon" oninput="document.getElementById('sIconPreview').src=this.value">
+          <img id="sIconPreview" src="code.png" style="max-width: 60px; max-height: 60px; border-radius: 10px; margin-top: 8px; display: block; background: rgba(255,255,255,0.05); padding: 4px;">
         </div>
       `;
       openCrudModal("Add New Skill");
@@ -1618,14 +1655,14 @@
     function openAddCertModal() {
       activeModalType = "add_cert";
       document.getElementById("crudFields").innerHTML = `
-        <div class="form-group" style="margin-bottom: 1rem;"><label>Certificate Title</label><input type="text" id="fCertTitle" required></div>
-        <div class="form-group" style="margin-bottom: 1rem;"><label>Description</label><textarea id="fCertDesc" required></textarea></div>
+        <div class="form-group" style="margin-bottom: 1rem;"><label>Certificate Title</label><input type="text" id="fCertTitle" placeholder="e.g. Advanced AI Certification" required></div>
+        <div class="form-group" style="margin-bottom: 1rem;"><label>Description</label><textarea id="fCertDesc" placeholder="e.g. Hands-on training in machine learning and data science workflows" required></textarea></div>
         <div class="form-group" style="margin-bottom: 1rem;">
           <label>Certificate Image (Upload JPG/PNG File or Enter Path)</label>
           <button type="button" onclick="document.getElementById('fCertImgFile').click()" class="btn-secondary" style="width:100%; justify-content:center; margin-bottom:0.6rem; padding:0.5rem;">📁 Choose Certificate File</button>
           <input type="file" accept="image/*" onchange="previewUploadImage(this, 'cImgPreview', 'fCertImg')" style="display: none;" id="fCertImgFile">
-          <input type="text" id="fCertImg" placeholder="e.g. onkarsqlda.jpg" oninput="document.getElementById('cImgPreview').src=this.value" required>
-          <img id="cImgPreview" src="" style="max-width: 140px; max-height: 90px; border-radius: 10px; margin-top: 8px; display: block; border: 1px solid var(--glass-border);">
+          <input type="text" id="fCertImg" placeholder="e.g. onkarsqlda.jpg or leave blank for default" oninput="document.getElementById('cImgPreview').src=this.value">
+          <img id="cImgPreview" src="onkarsqlda.jpg" style="max-width: 140px; max-height: 90px; border-radius: 10px; margin-top: 8px; display: block; border: 1px solid var(--glass-border);">
         </div>
       `;
       openCrudModal("Add New Certification");
@@ -1850,17 +1887,29 @@
           };
         }
       } else if (activeModalType === "add_skill") {
+        if (!currentData.skills) currentData.skills = [];
+        const nameInput = document.getElementById("fSkillName");
+        const iconInput = document.getElementById("fSkillIcon");
+        const sName = nameInput ? nameInput.value.trim() : "";
+        const sIcon = iconInput ? iconInput.value.trim() : "";
         currentData.skills.push({
           id: "s_" + Date.now(),
-          name: document.getElementById("fSkillName").value.trim(),
-          icon: document.getElementById("fSkillIcon").value.trim()
+          name: sName || "New Skill",
+          icon: sIcon || "code.png"
         });
       } else if (activeModalType === "add_cert") {
+        if (!currentData.certifications) currentData.certifications = [];
+        const titleInput = document.getElementById("fCertTitle");
+        const descInput = document.getElementById("fCertDesc");
+        const imgInput = document.getElementById("fCertImg");
+        const cTitle = titleInput ? titleInput.value.trim() : "";
+        const cDesc = descInput ? descInput.value.trim() : "";
+        const cImg = imgInput ? imgInput.value.trim() : "";
         currentData.certifications.push({
           id: "c_" + Date.now(),
-          title: document.getElementById("fCertTitle").value.trim(),
-          description: document.getElementById("fCertDesc").value.trim(),
-          image: document.getElementById("fCertImg").value.trim()
+          title: cTitle || "New Certification",
+          description: cDesc || "Professional certification & industrial training.",
+          image: cImg || "onkarsqlda.jpg"
         });
       } else if (activeModalType === "add_key_project") {
         if (!currentData.keyProjectsShowcase) currentData.keyProjectsShowcase = [];
