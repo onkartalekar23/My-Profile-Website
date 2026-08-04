@@ -362,6 +362,7 @@ function setAdminPassword(newPassword) {
    ========================================================================== */
 const CLOUD_SYNC_URL = "https://jsonblob.com/api/jsonBlob/019fcc16-5088-7e13-9bca-542d67907cc7";
 let isCloudSyncing = false;
+let isCloudPushing = false;
 
 function getActiveCloudUrl() {
   try {
@@ -371,14 +372,17 @@ function getActiveCloudUrl() {
   }
 }
 
-// Background Cloud Sync Fetcher
+// Background Cloud Sync Fetcher with Timestamp Protection
 async function fetchCloudData() {
-  if (isCloudSyncing) return;
+  if (isCloudSyncing || isCloudPushing) return;
   isCloudSyncing = true;
   try {
     const activeUrl = getActiveCloudUrl();
     const cacheBusterUrl = activeUrl + (activeUrl.includes("?") ? "&" : "?") + "t=" + Date.now();
-    const response = await fetch(cacheBusterUrl, { cache: "no-store" });
+    const response = await fetch(cacheBusterUrl, {
+      cache: "no-store",
+      headers: { "Pragma": "no-cache", "Cache-Control": "no-cache, no-store" }
+    });
     if (response && response.ok) {
       const cloudPayload = await response.json();
       if (cloudPayload && typeof cloudPayload === "object") {
@@ -388,23 +392,23 @@ async function fetchCloudData() {
           } catch(e) {}
         }
         if (cloudPayload.portfolioData) {
-          const normalized = ensureDataDefaults(cloudPayload.portfolioData);
-          let currentLocal = null;
-          try {
-            currentLocal = localStorage.getItem("onkar_portfolio_data");
-          } catch(e) {}
-          const newString = JSON.stringify(normalized);
+          const cloudData = ensureDataDefaults(cloudPayload.portfolioData);
+          const localData = getPortfolioData();
+          
+          // RACE CONDITION PROTECTION: Only overwrite if cloud timestamp is NEWER or EQUAL
+          const cloudTime = new Date(cloudPayload.lastUpdated || cloudData._lastUpdated || 0).getTime();
+          const localTime = new Date(localData._lastUpdated || 0).getTime();
 
-          if (currentLocal !== newString) {
+          if (cloudTime >= localTime) {
             try {
-              localStorage.setItem("onkar_portfolio_data", newString);
+              localStorage.setItem("onkar_portfolio_data", JSON.stringify(cloudData));
             } catch(e) {}
-          }
-          if (typeof renderDynamicPortfolioData === "function") {
-            renderDynamicPortfolioData();
-          }
-          if (typeof loadAdminData === "function") {
-            loadAdminData();
+            if (typeof renderDynamicPortfolioData === "function") {
+              renderDynamicPortfolioData();
+            }
+            if (typeof loadAdminData === "function") {
+              loadAdminData();
+            }
           }
         }
       }
@@ -416,15 +420,22 @@ async function fetchCloudData() {
   }
 }
 
-// Push Local State to Cloud (With Automatic Self-Healing Creation)
+// Push Local State to Cloud (With Lock & Timestamp Tagging)
 async function pushCloudData() {
+  isCloudPushing = true;
   try {
     const portfolioData = getPortfolioData();
+    const nowIso = new Date().toISOString();
+    portfolioData._lastUpdated = nowIso;
+    try {
+      localStorage.setItem("onkar_portfolio_data", JSON.stringify(portfolioData));
+    } catch(e) {}
+
     const adminPassword = getAdminPassword();
     const payload = {
       adminPassword: adminPassword,
       portfolioData: portfolioData,
-      lastUpdated: new Date().toISOString()
+      lastUpdated: nowIso
     };
     
     let activeUrl = getActiveCloudUrl();
@@ -448,7 +459,6 @@ async function pushCloudData() {
           try {
             localStorage.setItem("onkar_cloud_blob_url", freshUrl);
           } catch(e) {}
-          return true;
         }
       }
     }
@@ -457,6 +467,10 @@ async function pushCloudData() {
   } catch (e) {
     console.warn("Cloud sync write notice:", e);
     return false;
+  } finally {
+    setTimeout(() => {
+      isCloudPushing = false;
+    }, 2000);
   }
 }
 
