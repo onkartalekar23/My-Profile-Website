@@ -321,13 +321,23 @@ function getPortfolioData() {
 
 function savePortfolioData(data) {
   const normalized = ensureDataDefaults(data);
-  localStorage.setItem("onkar_portfolio_data", JSON.stringify(normalized));
+  try {
+    localStorage.setItem("onkar_portfolio_data", JSON.stringify(normalized));
+  } catch(e) {}
+  if (typeof renderDynamicPortfolioData === "function") {
+    renderDynamicPortfolioData();
+  }
   return pushCloudData();
 }
 
 function resetPortfolioData() {
   const normalized = normalizeTechCategories(JSON.parse(JSON.stringify(defaultPortfolioData)));
-  localStorage.setItem("onkar_portfolio_data", JSON.stringify(normalized));
+  try {
+    localStorage.setItem("onkar_portfolio_data", JSON.stringify(normalized));
+  } catch(e) {}
+  if (typeof renderDynamicPortfolioData === "function") {
+    renderDynamicPortfolioData();
+  }
   pushCloudData();
   return normalized;
 }
@@ -389,12 +399,12 @@ async function fetchCloudData() {
             try {
               localStorage.setItem("onkar_portfolio_data", newString);
             } catch(e) {}
-            if (typeof renderDynamicPortfolioData === "function") {
-              renderDynamicPortfolioData();
-            }
-            if (typeof loadAdminData === "function") {
-              loadAdminData();
-            }
+          }
+          if (typeof renderDynamicPortfolioData === "function") {
+            renderDynamicPortfolioData();
+          }
+          if (typeof loadAdminData === "function") {
+            loadAdminData();
           }
         }
       }

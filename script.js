@@ -212,58 +212,67 @@ function renderDynamicPortfolioData() {
   const data = getPortfolioData();
   if (!data) return;
 
-  // Render Projects Grid
-  const projGrid = document.querySelector(".projects-grid");
-  if (projGrid && data.projects) {
-    projGrid.innerHTML = data.projects.map(p => `
-      <div class="project-card-luxury">
-        <div class="project-img-wrapper" onclick="openImage(this)">
-          <img src="${p.image}" alt="${p.title}">
-        </div>
-        <div class="project-details">
-          <h3>${p.title}</h3>
-          <p>${p.description}</p>
-          <div class="project-tags">
-            ${(p.tags || []).map(t => `<span>${t}</span>`).join("")}
+  // Render Projects Grid Across All Pages
+  document.querySelectorAll(".projects-grid").forEach(projGrid => {
+    if (data.projects && data.projects.length > 0) {
+      projGrid.innerHTML = data.projects.map(p => `
+        <div class="project-card-luxury">
+          <div class="project-img-wrapper" onclick="openImage(this)">
+            <img src="${p.image}" alt="${p.title}" onerror="this.src='webprofile.png'">
           </div>
-          <a href="${p.demoLink}" target="_blank" class="project-link-btn">
-            View Live Demo <i class="fa-solid fa-arrow-up-right-from-square"></i>
-          </a>
+          <div class="project-details">
+            <h3>${p.title}</h3>
+            <p>${p.description}</p>
+            <div class="project-tags">
+              ${(p.tags || []).map(t => `<span>${t}</span>`).join("")}
+            </div>
+            <a href="${p.demoLink}" target="_blank" class="project-link-btn">
+              View Live Demo <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            </a>
+          </div>
         </div>
-      </div>
-    `).join("");
-  }
+      `).join("");
+    }
+  });
 
-  // Render Project Snapshot Gallery
-  const galleryGrid = document.querySelector(".gallery");
-  if (galleryGrid && data.projectGallery) {
-    galleryGrid.innerHTML = data.projectGallery.map(g => `
-      <div class="gallery-item" onclick="openImage(this)">
-        <img src="${g.image}" alt="${g.title || 'Project Snapshot'}">
-        <div class="gallery-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
-      </div>
-    `).join("");
-  }
+  // Render Project Snapshot Gallery Across All Pages
+  document.querySelectorAll(".gallery").forEach(galleryGrid => {
+    if (data.projectGallery && data.projectGallery.length > 0) {
+      galleryGrid.innerHTML = data.projectGallery.map(g => `
+        <div class="gallery-item" onclick="openImage(this)">
+          <img src="${g.image}" alt="${g.title || 'Project Snapshot'}" onerror="this.src='cake.jpeg'">
+          <div class="gallery-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
+        </div>
+      `).join("");
+    }
+  });
 
-  // Render Certifications Grid
-  const certGrid = document.querySelector(".cert-grid");
-  if (certGrid && data.certifications) {
-    certGrid.innerHTML = data.certifications.map(c => `
-      <div class="cert-card" onclick="openImage(this)">
-        <div class="cert-img-container"><img src="${c.image}" alt="${c.title}"></div>
-        <h3>${c.title}</h3>
-        <p>${c.description}</p>
-      </div>
-    `).join("");
-  }
+  // Render Certifications Grid Across All Pages
+  document.querySelectorAll(".cert-grid").forEach(certGrid => {
+    if (data.certifications && data.certifications.length > 0) {
+      certGrid.innerHTML = data.certifications.map(c => `
+        <div class="cert-card" onclick="openImage(this)">
+          <div class="cert-img-container">
+            <img src="${c.image}" alt="${c.title}" onerror="this.src='onkarsqlda.jpg'">
+          </div>
+          <h3>${c.title}</h3>
+          <p>${c.description}</p>
+        </div>
+      `).join("");
+    }
+  });
 
-  // Render Skills Grid
-  const skillGrid = document.querySelector(".skills-grid");
-  if (skillGrid && data.skills) {
-    skillGrid.innerHTML = data.skills.map(s => `
-      <div class="skill-card"><img src="${s.icon}" alt="${s.name}"><span>${s.name}</span></div>
-    `).join("");
-  }
+  // Render Skills Grid Across All Pages
+  document.querySelectorAll(".skills-grid").forEach(skillGrid => {
+    if (data.skills && data.skills.length > 0) {
+      skillGrid.innerHTML = data.skills.map(s => `
+        <div class="skill-card">
+          <img src="${s.icon}" alt="${s.name}" onerror="this.src='code.png'">
+          <span>${s.name}</span>
+        </div>
+      `).join("");
+    }
+  });
 
   // Render Dynamic Resume PDF Links & Embed Viewers Across All Pages
   if (data.profile && data.profile.resumePdf) {
@@ -580,4 +589,11 @@ function runTextAI() {
       outputBox.style.display = "block";
     }
   }, 800);
+}
+
+// Immediate rendering call on script load
+if (typeof renderDynamicPortfolioData === "function") {
+  try {
+    renderDynamicPortfolioData();
+  } catch(e) {}
 }
